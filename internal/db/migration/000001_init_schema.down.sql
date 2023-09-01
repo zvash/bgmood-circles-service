@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS "mood_reactions";
+DROP TABLE IF EXISTS "reactions";
+DROP TABLE IF EXISTS "circle_join_requests";
+DROP TABLE IF EXISTS "circle_invitations";
+DROP TABLE IF EXISTS "moods";
+DROP TABLE IF EXISTS "circle_members";
+DROP TABLE IF EXISTS "circle_tag";
+DROP TABLE IF EXISTS "tags";
+DROP TABLE IF EXISTS "circles";
