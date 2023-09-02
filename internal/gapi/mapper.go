@@ -2,6 +2,7 @@ package gapi
 
 import (
 	"fmt"
+	"github.com/iancoleman/strcase"
 	"github.com/zvash/bgmood-circles-service/internal/circlespb"
 	"github.com/zvash/bgmood-circles-service/internal/db/repository"
 	"github.com/zvash/bgmood-circles-service/internal/val"

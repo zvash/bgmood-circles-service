@@ -6,6 +6,7 @@ require (
 	github.com/go-playground/validator/v10 v10.15.3
 	github.com/google/uuid v1.3.0
 	github.com/hibiken/asynq v0.24.1
+	github.com/iancoleman/strcase v0.3.0
 	github.com/jackc/pgx/v5 v5.4.3
 	github.com/spf13/viper v1.16.0
 	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1
