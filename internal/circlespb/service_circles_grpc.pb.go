@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Circles_CreateCircle_FullMethodName = "/circlespb.Circles/CreateCircle"
+	Circles_CreateCircle_FullMethodName  = "/circlespb.Circles/CreateCircle"
+	Circles_DestroyCircle_FullMethodName = "/circlespb.Circles/DestroyCircle"
 )
 
 // CirclesClient is the client API for Circles service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CirclesClient interface {
 	CreateCircle(ctx context.Context, in *CreateCircleRequest, opts ...grpc.CallOption) (*CreateCircleResponse, error)
+	DestroyCircle(ctx context.Context, in *DestroyCircleRequest, opts ...grpc.CallOption) (*DestroyCircleResponse, error)
 }
 
 type circlesClient struct {
@@ -46,11 +48,21 @@ func (c *circlesClient) CreateCircle(ctx context.Context, in *CreateCircleReques
 	return out, nil
 }
 
+func (c *circlesClient) DestroyCircle(ctx context.Context, in *DestroyCircleRequest, opts ...grpc.CallOption) (*DestroyCircleResponse, error) {
+	out := new(DestroyCircleResponse)
+	err := c.cc.Invoke(ctx, Circles_DestroyCircle_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CirclesServer is the server API for Circles service.
 // All implementations must embed UnimplementedCirclesServer
 // for forward compatibility
 type CirclesServer interface {
 	CreateCircle(context.Context, *CreateCircleRequest) (*CreateCircleResponse, error)
+	DestroyCircle(context.Context, *DestroyCircleRequest) (*DestroyCircleResponse, error)
 	mustEmbedUnimplementedCirclesServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedCirclesServer struct {
 
 func (UnimplementedCirclesServer) CreateCircle(context.Context, *CreateCircleRequest) (*CreateCircleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCircle not implemented")
+}
+func (UnimplementedCirclesServer) DestroyCircle(context.Context, *DestroyCircleRequest) (*DestroyCircleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DestroyCircle not implemented")
 }
 func (UnimplementedCirclesServer) mustEmbedUnimplementedCirclesServer() {}
 
@@ -92,6 +107,24 @@ func _Circles_CreateCircle_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Circles_DestroyCircle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DestroyCircleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CirclesServer).DestroyCircle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Circles_DestroyCircle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CirclesServer).DestroyCircle(ctx, req.(*DestroyCircleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Circles_ServiceDesc is the grpc.ServiceDesc for Circles service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var Circles_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateCircle",
 			Handler:    _Circles_CreateCircle_Handler,
+		},
+		{
+			MethodName: "DestroyCircle",
+			Handler:    _Circles_DestroyCircle_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

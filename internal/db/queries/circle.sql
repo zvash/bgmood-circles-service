@@ -8,6 +8,12 @@ DELETE
 FROM circles
 WHERE id = $1;
 
+-- name: GetUserCircle :one
+SELECT *
+FROM circles
+WHERE owner_id = $1
+  AND id = $2;
+
 -- name: InviteToCircle :one
 INSERT INTO circle_invitations (circle_id, user_id)
 VALUES ($1, $2)
@@ -30,9 +36,24 @@ FROM circle_invitations
 WHERE user_id = $1
   AND circle_id = $2;
 
+-- name: RemoveAllJoinRequests :exec
+DELETE
+FROM circle_join_requests
+WHERE circle_id = $1;
+
+-- name: RemoveAllInvitations :exec
+DELETE
+FROM circle_invitations
+WHERE circle_id = $1;
+
 -- name: AcceptInvitation :one
 INSERT INTO circle_members (circle_id, member_id, membership_type, acceptance_type)
 VALUES ($1, $2, $3, $4)
+RETURNING *;
+
+-- name: SetCircleOwner :one
+INSERT INTO circle_members (circle_id, member_id, membership_type, acceptance_type)
+VALUES ($1, $2, 'OWNER', 'ASK_FIRST')
 RETURNING *;
 
 -- name: KickFromCircle :exec
@@ -121,9 +142,24 @@ UPDATE circle_members
 SET membership_type = 'VIEWER'
 RETURNING *;
 
+-- name: SetCircleAccessToOwner :one
+UPDATE circle_members
+SET membership_type = 'OWNER'
+RETURNING *;
+
 -- name: ExploreCirclesPaginated :many
 SELECT *
 FROM circles
 WHERE circle_type = 'HALL'
 ORDER BY created_at DESC
 OFFSET $1 LIMIT $2;
+
+-- name: RemoveAllCircleMembers :exec
+DELETE
+FROM circle_members
+WHERE circle_id = $1;
+
+-- name: RemoveAllCircleTags :exec
+DELETE
+FROM circle_tag
+WHERE circle_id = $1;

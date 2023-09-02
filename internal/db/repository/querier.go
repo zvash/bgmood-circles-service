@@ -22,6 +22,7 @@ type Querier interface {
 	GetCircle(ctx context.Context, id uuid.UUID) (Circle, error)
 	GetCircleMoods(ctx context.Context, circleID uuid.UUID) ([]Mood, error)
 	GetCircleMoodsPaginated(ctx context.Context, arg GetCircleMoodsPaginatedParams) ([]Mood, error)
+	GetUserCircle(ctx context.Context, arg GetUserCircleParams) (Circle, error)
 	GrantWPChangeAccessToCircle(ctx context.Context, arg GrantWPChangeAccessToCircleParams) (CircleMember, error)
 	InviteToCircle(ctx context.Context, arg InviteToCircleParams) (CircleInvitation, error)
 	KickFromCircle(ctx context.Context, arg KickFromCircleParams) error
@@ -30,12 +31,18 @@ type Querier interface {
 	ListJoinedCircles(ctx context.Context, memberID uuid.UUID) ([]Circle, error)
 	ListRequestedCircles(ctx context.Context, userID uuid.UUID) ([]Circle, error)
 	ReactToMood(ctx context.Context, arg ReactToMoodParams) (MoodReaction, error)
+	RemoveAllCircleMembers(ctx context.Context, circleID uuid.UUID) error
+	RemoveAllCircleTags(ctx context.Context, circleID uuid.UUID) error
+	RemoveAllInvitations(ctx context.Context, circleID uuid.UUID) error
+	RemoveAllJoinRequests(ctx context.Context, circleID uuid.UUID) error
 	RemoveInvitation(ctx context.Context, arg RemoveInvitationParams) error
 	RemoveJoinRequest(ctx context.Context, arg RemoveJoinRequestParams) error
 	RemoveReactToMood(ctx context.Context, arg RemoveReactToMoodParams) error
 	SetCircleAccessToAdmin(ctx context.Context) (CircleMember, error)
+	SetCircleAccessToOwner(ctx context.Context) (CircleMember, error)
 	SetCircleAccessToPoster(ctx context.Context) (CircleMember, error)
 	SetCircleAccessToViewer(ctx context.Context) (CircleMember, error)
+	SetCircleOwner(ctx context.Context, arg SetCircleOwnerParams) (CircleMember, error)
 	UpdateCircle(ctx context.Context, arg UpdateCircleParams) (Circle, error)
 }
 

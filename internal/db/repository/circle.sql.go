@@ -242,6 +242,37 @@ func (q *Queries) GetCircle(ctx context.Context, id uuid.UUID) (Circle, error) {
 	return i, err
 }
 
+const getUserCircle = `-- name: GetUserCircle :one
+SELECT id, owner_id, title, avatar, description, circle_type, is_private, is_featured, display_duration, created_at, deleted_at
+FROM circles
+WHERE owner_id = $1
+  AND id = $2
+`
+
+type GetUserCircleParams struct {
+	OwnerID uuid.UUID `json:"owner_id"`
+	ID      uuid.UUID `json:"id"`
+}
+
+func (q *Queries) GetUserCircle(ctx context.Context, arg GetUserCircleParams) (Circle, error) {
+	row := q.db.QueryRow(ctx, getUserCircle, arg.OwnerID, arg.ID)
+	var i Circle
+	err := row.Scan(
+		&i.ID,
+		&i.OwnerID,
+		&i.Title,
+		&i.Avatar,
+		&i.Description,
+		&i.CircleType,
+		&i.IsPrivate,
+		&i.IsFeatured,
+		&i.DisplayDuration,
+		&i.CreatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
 const grantWPChangeAccessToCircle = `-- name: GrantWPChangeAccessToCircle :one
 UPDATE circle_members
 SET acceptance_type = 'ACCEPT_ALL'
@@ -446,6 +477,50 @@ func (q *Queries) ListRequestedCircles(ctx context.Context, userID uuid.UUID) ([
 	return items, nil
 }
 
+const removeAllCircleMembers = `-- name: RemoveAllCircleMembers :exec
+DELETE
+FROM circle_members
+WHERE circle_id = $1
+`
+
+func (q *Queries) RemoveAllCircleMembers(ctx context.Context, circleID uuid.UUID) error {
+	_, err := q.db.Exec(ctx, removeAllCircleMembers, circleID)
+	return err
+}
+
+const removeAllCircleTags = `-- name: RemoveAllCircleTags :exec
+DELETE
+FROM circle_tag
+WHERE circle_id = $1
+`
+
+func (q *Queries) RemoveAllCircleTags(ctx context.Context, circleID uuid.UUID) error {
+	_, err := q.db.Exec(ctx, removeAllCircleTags, circleID)
+	return err
+}
+
+const removeAllInvitations = `-- name: RemoveAllInvitations :exec
+DELETE
+FROM circle_invitations
+WHERE circle_id = $1
+`
+
+func (q *Queries) RemoveAllInvitations(ctx context.Context, circleID uuid.UUID) error {
+	_, err := q.db.Exec(ctx, removeAllInvitations, circleID)
+	return err
+}
+
+const removeAllJoinRequests = `-- name: RemoveAllJoinRequests :exec
+DELETE
+FROM circle_join_requests
+WHERE circle_id = $1
+`
+
+func (q *Queries) RemoveAllJoinRequests(ctx context.Context, circleID uuid.UUID) error {
+	_, err := q.db.Exec(ctx, removeAllJoinRequests, circleID)
+	return err
+}
+
 const removeInvitation = `-- name: RemoveInvitation :exec
 DELETE
 FROM circle_invitations
@@ -500,6 +575,26 @@ func (q *Queries) SetCircleAccessToAdmin(ctx context.Context) (CircleMember, err
 	return i, err
 }
 
+const setCircleAccessToOwner = `-- name: SetCircleAccessToOwner :one
+UPDATE circle_members
+SET membership_type = 'OWNER'
+RETURNING id, circle_id, member_id, membership_type, acceptance_type, created_at
+`
+
+func (q *Queries) SetCircleAccessToOwner(ctx context.Context) (CircleMember, error) {
+	row := q.db.QueryRow(ctx, setCircleAccessToOwner)
+	var i CircleMember
+	err := row.Scan(
+		&i.ID,
+		&i.CircleID,
+		&i.MemberID,
+		&i.MembershipType,
+		&i.AcceptanceType,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const setCircleAccessToPoster = `-- name: SetCircleAccessToPoster :one
 UPDATE circle_members
 SET membership_type = 'POSTER'
@@ -528,6 +623,31 @@ RETURNING id, circle_id, member_id, membership_type, acceptance_type, created_at
 
 func (q *Queries) SetCircleAccessToViewer(ctx context.Context) (CircleMember, error) {
 	row := q.db.QueryRow(ctx, setCircleAccessToViewer)
+	var i CircleMember
+	err := row.Scan(
+		&i.ID,
+		&i.CircleID,
+		&i.MemberID,
+		&i.MembershipType,
+		&i.AcceptanceType,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const setCircleOwner = `-- name: SetCircleOwner :one
+INSERT INTO circle_members (circle_id, member_id, membership_type, acceptance_type)
+VALUES ($1, $2, 'OWNER', 'ASK_FIRST')
+RETURNING id, circle_id, member_id, membership_type, acceptance_type, created_at
+`
+
+type SetCircleOwnerParams struct {
+	CircleID uuid.UUID `json:"circle_id"`
+	MemberID uuid.UUID `json:"member_id"`
+}
+
+func (q *Queries) SetCircleOwner(ctx context.Context, arg SetCircleOwnerParams) (CircleMember, error) {
+	row := q.db.QueryRow(ctx, setCircleOwner, arg.CircleID, arg.MemberID)
 	var i CircleMember
 	err := row.Scan(
 		&i.ID,

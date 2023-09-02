@@ -3,12 +3,15 @@ package db
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/zvash/bgmood-circles-service/internal/db/repository"
 )
 
 type DataStore interface {
 	repository.Querier
+	CreateCircleTransaction(context.Context, repository.CreateCircleParams) (repository.Circle, error)
+	RemoveCircleTransaction(ctx context.Context, circleId uuid.UUID) error
 }
 
 type SQLStore struct {
