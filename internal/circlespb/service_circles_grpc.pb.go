@@ -7,7 +7,10 @@
 package circlespb
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -15,12 +18,15 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-const ()
+const (
+	Circles_CreateCircle_FullMethodName = "/circlespb.Circles/CreateCircle"
+)
 
 // CirclesClient is the client API for Circles service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CirclesClient interface {
+	CreateCircle(ctx context.Context, in *CreateCircleRequest, opts ...grpc.CallOption) (*CreateCircleResponse, error)
 }
 
 type circlesClient struct {
@@ -31,10 +37,20 @@ func NewCirclesClient(cc grpc.ClientConnInterface) CirclesClient {
 	return &circlesClient{cc}
 }
 
+func (c *circlesClient) CreateCircle(ctx context.Context, in *CreateCircleRequest, opts ...grpc.CallOption) (*CreateCircleResponse, error) {
+	out := new(CreateCircleResponse)
+	err := c.cc.Invoke(ctx, Circles_CreateCircle_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CirclesServer is the server API for Circles service.
 // All implementations must embed UnimplementedCirclesServer
 // for forward compatibility
 type CirclesServer interface {
+	CreateCircle(context.Context, *CreateCircleRequest) (*CreateCircleResponse, error)
 	mustEmbedUnimplementedCirclesServer()
 }
 
@@ -42,6 +58,9 @@ type CirclesServer interface {
 type UnimplementedCirclesServer struct {
 }
 
+func (UnimplementedCirclesServer) CreateCircle(context.Context, *CreateCircleRequest) (*CreateCircleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCircle not implemented")
+}
 func (UnimplementedCirclesServer) mustEmbedUnimplementedCirclesServer() {}
 
 // UnsafeCirclesServer may be embedded to opt out of forward compatibility for this service.
@@ -55,13 +74,36 @@ func RegisterCirclesServer(s grpc.ServiceRegistrar, srv CirclesServer) {
 	s.RegisterService(&Circles_ServiceDesc, srv)
 }
 
+func _Circles_CreateCircle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCircleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CirclesServer).CreateCircle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Circles_CreateCircle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CirclesServer).CreateCircle(ctx, req.(*CreateCircleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Circles_ServiceDesc is the grpc.ServiceDesc for Circles service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Circles_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "circlespb.Circles",
 	HandlerType: (*CirclesServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "service_circles.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateCircle",
+			Handler:    _Circles_CreateCircle_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "service_circles.proto",
 }
