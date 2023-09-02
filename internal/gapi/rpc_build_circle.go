@@ -20,7 +20,11 @@ func (server *Server) CreateCircle(ctx context.Context, req *circlespb.CreateCir
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "could not generate random uuid", err)
 	}
-	ownerUUID, err := uuid.Parse(dto.OwnerId)
+	owner, err := server.extractUserFromContext(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "unauthorized.")
+	}
+	ownerUUID, err := uuid.Parse(owner.Id)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "could not generate uuid from ownerId", err)
 	}

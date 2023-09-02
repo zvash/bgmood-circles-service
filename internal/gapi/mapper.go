@@ -44,7 +44,6 @@ func errorResponsesToStatusErrors(errs []val.ErrorResponse) error {
 
 func circlespbCreateCircleRequestToValCreateCircleRequest(req *circlespb.CreateCircleRequest) val.CreateCircleRequest {
 	return val.CreateCircleRequest{
-		OwnerId:     req.OwnerId,
 		Title:       req.Title,
 		Avatar:      req.Avatar,
 		Description: req.GetDescription(),
