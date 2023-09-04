@@ -13,6 +13,7 @@ import (
 type Querier interface {
 	AcceptInvitation(ctx context.Context, arg AcceptInvitationParams) (CircleMember, error)
 	AskForWPChangeByCircle(ctx context.Context, arg AskForWPChangeByCircleParams) (CircleMember, error)
+	CheckIfMemberExists(ctx context.Context, arg CheckIfMemberExistsParams) (bool, error)
 	CreateCircle(ctx context.Context, arg CreateCircleParams) (Circle, error)
 	CreateJoinRequest(ctx context.Context, arg CreateJoinRequestParams) (CircleJoinRequest, error)
 	CreateMood(ctx context.Context, arg CreateMoodParams) (Mood, error)

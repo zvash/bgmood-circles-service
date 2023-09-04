@@ -71,6 +71,22 @@ func (q *Queries) AskForWPChangeByCircle(ctx context.Context, arg AskForWPChange
 	return i, err
 }
 
+const checkIfMemberExists = `-- name: CheckIfMemberExists :one
+SELECT EXISTS(SELECT 1 FROM circle_members WHERE circle_id = $1 AND member_id = $2)
+`
+
+type CheckIfMemberExistsParams struct {
+	CircleID uuid.UUID `json:"circle_id"`
+	MemberID uuid.UUID `json:"member_id"`
+}
+
+func (q *Queries) CheckIfMemberExists(ctx context.Context, arg CheckIfMemberExistsParams) (bool, error) {
+	row := q.db.QueryRow(ctx, checkIfMemberExists, arg.CircleID, arg.MemberID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const createCircle = `-- name: CreateCircle :one
 INSERT INTO circles (id, owner_id, title, avatar, description, circle_type, is_private, is_featured)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -668,7 +684,7 @@ SET title            = COALESCE($1::varchar, title),
     is_private       = COALESCE($4::boolean, is_private),
     is_featured      = COALESCE($5::boolean, is_featured),
     display_duration = COALESCE($6::int, display_duration),
-    circle_tyoe = COALESCE($7::circle_type, circle_type)
+    circle_tyoe      = COALESCE($7::circle_type, circle_type)
 WHERE id = $8::uuid
 RETURNING id, owner_id, title, avatar, description, circle_type, is_private, is_featured, display_duration, created_at, deleted_at
 `

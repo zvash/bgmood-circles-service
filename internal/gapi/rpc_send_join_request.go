@@ -30,6 +30,16 @@ func (server *Server) SendJoinRequest(ctx context.Context, req *cpb.SendJoinRequ
 		}
 		return nil, internalServerError()
 	}
+	exists, err := server.db.CheckIfMemberExists(ctx, repository.CheckIfMemberExistsParams{
+		CircleID: circleUUID,
+		MemberID: userUUID,
+	})
+	if err != nil {
+		return nil, internalServerError()
+	}
+	if exists {
+		return nil, status.Errorf(codes.AlreadyExists, "user is already a member of the circle")
+	}
 	if circle.IsPrivate && circle.CircleType == repository.CircleTypeHALL {
 		_, err = server.db.CreateJoinRequest(ctx, repository.CreateJoinRequestParams{
 			CircleID: circleUUID,

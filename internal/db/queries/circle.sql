@@ -62,6 +62,9 @@ FROM circle_members
 WHERE circle_id = $1
   AND member_id = $2;
 
+-- name: CheckIfMemberExists :one
+SELECT EXISTS(SELECT 1 FROM circle_members WHERE circle_id = $1 AND member_id = $2);
+
 -- name: ListRequestedCircles :many
 SELECT c.*
 FROM circles c,
