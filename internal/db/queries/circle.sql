@@ -89,7 +89,17 @@ SELECT c.*
 FROM circles c,
      circle_members cm
 WHERE c.id = cm.circle_id
-  AND cm.member_id = $1;
+  AND cm.member_id = $1
+ORDER BY cm.created_at DESC;
+
+-- name: ListJoinedCirclesPaginated :many
+SELECT c.*
+FROM circles c,
+     circle_members cm
+WHERE c.id = cm.circle_id
+  AND cm.member_id = $1
+ORDER BY cm.created_at DESC
+OFFSET $2 LIMIT $3;
 
 -- name: LeaveCircle :exec
 DELETE

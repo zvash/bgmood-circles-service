@@ -115,3 +115,9 @@ func cpbLeaveCircleRequestToValLeaveCircleRequest(req *cpb.LeaveCircleRequest) v
 		CircleID: req.GetCircleId(),
 	}
 }
+
+func cpbGetJoinedCirclesRequestToValGetJoinedCirclesRequest(req *cpb.GetJoinedCirclesRequest) val.GetJoinedCirclesRequest {
+	return val.GetJoinedCirclesRequest{
+		Page: req.GetPage(),
+	}
+}

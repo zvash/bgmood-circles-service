@@ -41,3 +41,7 @@ type RemoveJoinRequestRequest struct {
 type LeaveCircleRequest struct {
 	CircleID string `json:"circle_id" validate:"required,uuid"`
 }
+
+type GetJoinedCirclesRequest struct {
+	Page int64 `json:"page" validate:"required,number,min=1"`
+}

@@ -432,10 +432,59 @@ FROM circles c,
      circle_members cm
 WHERE c.id = cm.circle_id
   AND cm.member_id = $1
+ORDER BY cm.created_at DESC
 `
 
 func (q *Queries) ListJoinedCircles(ctx context.Context, memberID uuid.UUID) ([]Circle, error) {
 	rows, err := q.db.Query(ctx, listJoinedCircles, memberID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Circle{}
+	for rows.Next() {
+		var i Circle
+		if err := rows.Scan(
+			&i.ID,
+			&i.OwnerID,
+			&i.Title,
+			&i.Avatar,
+			&i.Description,
+			&i.CircleType,
+			&i.IsPrivate,
+			&i.IsFeatured,
+			&i.DisplayDuration,
+			&i.CreatedAt,
+			&i.DeletedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listJoinedCirclesPaginated = `-- name: ListJoinedCirclesPaginated :many
+SELECT c.id, c.owner_id, c.title, c.avatar, c.description, c.circle_type, c.is_private, c.is_featured, c.display_duration, c.created_at, c.deleted_at
+FROM circles c,
+     circle_members cm
+WHERE c.id = cm.circle_id
+  AND cm.member_id = $1
+ORDER BY cm.created_at DESC
+OFFSET $2 LIMIT $3
+`
+
+type ListJoinedCirclesPaginatedParams struct {
+	MemberID uuid.UUID `json:"member_id"`
+	Offset   int32     `json:"offset"`
+	Limit    int32     `json:"limit"`
+}
+
+func (q *Queries) ListJoinedCirclesPaginated(ctx context.Context, arg ListJoinedCirclesPaginatedParams) ([]Circle, error) {
+	rows, err := q.db.Query(ctx, listJoinedCirclesPaginated, arg.MemberID, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
