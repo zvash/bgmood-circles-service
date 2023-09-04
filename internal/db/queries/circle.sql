@@ -30,6 +30,11 @@ FROM circle_join_requests
 WHERE user_id = $1
   AND circle_id = $2;
 
+-- name: GetJoinRequest :one
+SELECt *
+FROM circle_join_requests
+WHERE id = $1;
+
 -- name: RemoveInvitation :exec
 DELETE
 FROM circle_invitations
@@ -46,7 +51,7 @@ DELETE
 FROM circle_invitations
 WHERE circle_id = $1;
 
--- name: AcceptInvitation :one
+-- name: AddMemberToCircle :one
 INSERT INTO circle_members (circle_id, member_id, membership_type, acceptance_type)
 VALUES ($1, $2, $3, $4)
 RETURNING *;

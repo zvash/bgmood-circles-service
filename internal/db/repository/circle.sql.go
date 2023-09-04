@@ -12,21 +12,21 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const acceptInvitation = `-- name: AcceptInvitation :one
+const addMemberToCircle = `-- name: AddMemberToCircle :one
 INSERT INTO circle_members (circle_id, member_id, membership_type, acceptance_type)
 VALUES ($1, $2, $3, $4)
 RETURNING id, circle_id, member_id, membership_type, acceptance_type, created_at
 `
 
-type AcceptInvitationParams struct {
+type AddMemberToCircleParams struct {
 	CircleID       uuid.UUID      `json:"circle_id"`
 	MemberID       uuid.UUID      `json:"member_id"`
 	MembershipType MembershipType `json:"membership_type"`
 	AcceptanceType AcceptanceType `json:"acceptance_type"`
 }
 
-func (q *Queries) AcceptInvitation(ctx context.Context, arg AcceptInvitationParams) (CircleMember, error) {
-	row := q.db.QueryRow(ctx, acceptInvitation,
+func (q *Queries) AddMemberToCircle(ctx context.Context, arg AddMemberToCircleParams) (CircleMember, error) {
+	row := q.db.QueryRow(ctx, addMemberToCircle,
 		arg.CircleID,
 		arg.MemberID,
 		arg.MembershipType,
@@ -255,6 +255,19 @@ func (q *Queries) GetCircle(ctx context.Context, id uuid.UUID) (Circle, error) {
 		&i.CreatedAt,
 		&i.DeletedAt,
 	)
+	return i, err
+}
+
+const getJoinRequest = `-- name: GetJoinRequest :one
+SELECt id, circle_id, user_id
+FROM circle_join_requests
+WHERE id = $1
+`
+
+func (q *Queries) GetJoinRequest(ctx context.Context, id int64) (CircleJoinRequest, error) {
+	row := q.db.QueryRow(ctx, getJoinRequest, id)
+	var i CircleJoinRequest
+	err := row.Scan(&i.ID, &i.CircleID, &i.UserID)
 	return i, err
 }
 

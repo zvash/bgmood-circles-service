@@ -29,3 +29,7 @@ type KickFromCircleRequest struct {
 type SendJoinRequestRequest struct {
 	CircleID string `json:"circle_id" validate:"required,uuid"`
 }
+
+type AcceptJoinRequestRequest struct {
+	JoinRequestID int64 `json:"join_request_id" validate:"required,number,min=1"`
+}

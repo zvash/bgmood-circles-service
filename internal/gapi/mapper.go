@@ -97,3 +97,9 @@ func cpbSendJoinRequestRequestToValSendJoinRequestRequest(req *cpb.SendJoinReque
 		CircleID: req.GetCircleId(),
 	}
 }
+
+func cpbAcceptJoinRequestRequestToValAcceptJoinRequestRequest(req *cpb.AcceptJoinRequestRequest) val.AcceptJoinRequestRequest {
+	return val.AcceptJoinRequestRequest{
+		JoinRequestID: req.GetJoinRequestId(),
+	}
+}

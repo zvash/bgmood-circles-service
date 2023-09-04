@@ -56,3 +56,20 @@ func uniqueOrInternalError(err error) error {
 	}
 	return internalServerError()
 }
+
+func notFoundOrInternalError(err error) error {
+	if errors.Is(err, db.ErrRecordNotFound) {
+		return status.Errorf(codes.NotFound, "record was not found")
+	}
+	return internalServerError()
+}
+
+func returnDBError(err error) error {
+	if errors.Is(err, db.ErrRecordNotFound) {
+		return status.Errorf(codes.NotFound, "record was not found")
+	}
+	if errors.Is(err, db.ErrUniqueViolation) {
+		return status.Errorf(codes.AlreadyExists, "record already exists")
+	}
+	return internalServerError()
+}

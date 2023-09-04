@@ -11,7 +11,7 @@ import (
 )
 
 type Querier interface {
-	AcceptInvitation(ctx context.Context, arg AcceptInvitationParams) (CircleMember, error)
+	AddMemberToCircle(ctx context.Context, arg AddMemberToCircleParams) (CircleMember, error)
 	AskForWPChangeByCircle(ctx context.Context, arg AskForWPChangeByCircleParams) (CircleMember, error)
 	CheckIfMemberExists(ctx context.Context, arg CheckIfMemberExistsParams) (bool, error)
 	CreateCircle(ctx context.Context, arg CreateCircleParams) (Circle, error)
@@ -23,6 +23,7 @@ type Querier interface {
 	GetCircle(ctx context.Context, id uuid.UUID) (Circle, error)
 	GetCircleMoods(ctx context.Context, circleID uuid.UUID) ([]Mood, error)
 	GetCircleMoodsPaginated(ctx context.Context, arg GetCircleMoodsPaginatedParams) ([]Mood, error)
+	GetJoinRequest(ctx context.Context, id int64) (CircleJoinRequest, error)
 	GetUserCircle(ctx context.Context, arg GetUserCircleParams) (Circle, error)
 	GrantWPChangeAccessToCircle(ctx context.Context, arg GrantWPChangeAccessToCircleParams) (CircleMember, error)
 	InviteToCircle(ctx context.Context, arg InviteToCircleParams) (CircleInvitation, error)
