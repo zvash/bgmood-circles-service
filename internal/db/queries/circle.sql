@@ -191,3 +191,21 @@ WHERE circle_id = $1;
 DELETE
 FROM circle_tag
 WHERE circle_id = $1;
+
+-- name: DisplayCircleToUser :one
+SELECT c.*, (CASE WHEN cm.circle_id THEN FALSE ELSE TRUE END) as is_member
+FROM circles c
+         LEFT JOIN circle_members cm ON c.id = cm.circle_id
+WHERE c.id = $1
+  AND (c.circle_type = 'HALL' OR cm.member_id = $2);
+
+
+-- name: GetMemberCount :one
+SELECT count(*)
+FROM circle_members
+WHERE circle_id = $1;
+
+-- name: GetMoodCount :one
+SELECT count(*)
+FROM moods
+WHERE circle_id = $1;

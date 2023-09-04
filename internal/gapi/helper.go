@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"github.com/google/uuid"
+	"github.com/zvash/bgmood-circles-service/internal/cpb"
 	"github.com/zvash/bgmood-circles-service/internal/db"
 	"github.com/zvash/bgmood-circles-service/internal/db/repository"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func stringToUUID(value string) (uuid.UUID, error) {
@@ -44,6 +46,41 @@ func (server *Server) getCircleForOwner(ctx context.Context, circleID uuid.UUID)
 		return circle, status.Errorf(codes.Internal, "internal server error.")
 	}
 	return circle, nil
+}
+
+func (server *Server) getCircleMeta(ctx context.Context, circleID uuid.UUID, userID uuid.UUID) (*cpb.CircleMeta, error) {
+	circle, err := server.db.DisplayCircleToUser(ctx, repository.DisplayCircleToUserParams{
+		ID:       circleID,
+		MemberID: userID,
+	})
+	if err != nil {
+		return nil, notFoundOrInternalError(err)
+	}
+	circleMeta := &cpb.CircleMeta{
+		Id:             circle.ID.String(),
+		OwnerId:        circle.OwnerID.String(),
+		Title:          circle.Title,
+		Avatar:         circle.Avatar.String,
+		Description:    circle.Description.String,
+		CircleType:     string(circle.CircleType),
+		IsPrivate:      circle.IsPrivate,
+		IsFeatured:     circle.IsFeatured,
+		CreatedAt:      timestamppb.New(circle.CreatedAt),
+		MoodCount:      0,
+		MemberCount:    0,
+		ViewerIsMember: circle.IsMember,
+	}
+	memberCount, err := server.db.GetMemberCount(ctx, circle.ID)
+	if err != nil {
+		return nil, internalServerError()
+	}
+	circleMeta.MemberCount = memberCount
+	moodCount, err := server.db.GetMoodCount(ctx, circle.ID)
+	if err != nil {
+		return nil, internalServerError()
+	}
+	circleMeta.MoodCount = moodCount
+	return circleMeta, nil
 }
 
 func internalServerError() error {

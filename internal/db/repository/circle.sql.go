@@ -7,6 +7,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -188,6 +189,54 @@ func (q *Queries) DenyWPChangeAccessToCircle(ctx context.Context, arg DenyWPChan
 	return i, err
 }
 
+const displayCircleToUser = `-- name: DisplayCircleToUser :one
+SELECT c.id, c.owner_id, c.title, c.avatar, c.description, c.circle_type, c.is_private, c.is_featured, c.display_duration, c.created_at, c.deleted_at, (CASE WHEN cm.circle_id THEN FALSE ELSE TRUE END) as is_member
+FROM circles c
+         LEFT JOIN circle_members cm ON c.id = cm.circle_id
+WHERE c.id = $1
+  AND (c.circle_type = 'HALL' OR cm.member_id = $2)
+`
+
+type DisplayCircleToUserParams struct {
+	ID       uuid.UUID `json:"id"`
+	MemberID uuid.UUID `json:"member_id"`
+}
+
+type DisplayCircleToUserRow struct {
+	ID              uuid.UUID          `json:"id"`
+	OwnerID         uuid.UUID          `json:"owner_id"`
+	Title           string             `json:"title"`
+	Avatar          pgtype.Text        `json:"avatar"`
+	Description     pgtype.Text        `json:"description"`
+	CircleType      CircleType         `json:"circle_type"`
+	IsPrivate       bool               `json:"is_private"`
+	IsFeatured      bool               `json:"is_featured"`
+	DisplayDuration int32              `json:"display_duration"`
+	CreatedAt       time.Time          `json:"created_at"`
+	DeletedAt       pgtype.Timestamptz `json:"deleted_at"`
+	IsMember        bool               `json:"is_member"`
+}
+
+func (q *Queries) DisplayCircleToUser(ctx context.Context, arg DisplayCircleToUserParams) (DisplayCircleToUserRow, error) {
+	row := q.db.QueryRow(ctx, displayCircleToUser, arg.ID, arg.MemberID)
+	var i DisplayCircleToUserRow
+	err := row.Scan(
+		&i.ID,
+		&i.OwnerID,
+		&i.Title,
+		&i.Avatar,
+		&i.Description,
+		&i.CircleType,
+		&i.IsPrivate,
+		&i.IsFeatured,
+		&i.DisplayDuration,
+		&i.CreatedAt,
+		&i.DeletedAt,
+		&i.IsMember,
+	)
+	return i, err
+}
+
 const exploreCirclesPaginated = `-- name: ExploreCirclesPaginated :many
 SELECT id, owner_id, title, avatar, description, circle_type, is_private, is_featured, display_duration, created_at, deleted_at
 FROM circles
@@ -269,6 +318,32 @@ func (q *Queries) GetJoinRequest(ctx context.Context, id int64) (CircleJoinReque
 	var i CircleJoinRequest
 	err := row.Scan(&i.ID, &i.CircleID, &i.UserID)
 	return i, err
+}
+
+const getMemberCount = `-- name: GetMemberCount :one
+SELECT count(*)
+FROM circle_members
+WHERE circle_id = $1
+`
+
+func (q *Queries) GetMemberCount(ctx context.Context, circleID uuid.UUID) (int64, error) {
+	row := q.db.QueryRow(ctx, getMemberCount, circleID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const getMoodCount = `-- name: GetMoodCount :one
+SELECT count(*)
+FROM moods
+WHERE circle_id = $1
+`
+
+func (q *Queries) GetMoodCount(ctx context.Context, circleID uuid.UUID) (int64, error) {
+	row := q.db.QueryRow(ctx, getMoodCount, circleID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
 }
 
 const getUserCircle = `-- name: GetUserCircle :one

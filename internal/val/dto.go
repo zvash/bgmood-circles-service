@@ -49,3 +49,7 @@ type GetJoinedCirclesRequest struct {
 type GetRequestedCirclesRequest struct {
 	Page int64 `json:"page" validate:"required,number,min=1"`
 }
+
+type ViewCircleRequest struct {
+	CircleID string `json:"circle_id" validate:"required,uuid"`
+}

@@ -127,3 +127,9 @@ func cpbGetRequestedCirclesRequestToValGetRequestedCirclesRequest(req *cpb.GetRe
 		Page: req.GetPage(),
 	}
 }
+
+func cpbViewCircleRequestToValViewCircleRequest(req *cpb.ViewCircleRequest) val.ViewCircleRequest {
+	return val.ViewCircleRequest{
+		CircleID: req.GetCircleId(),
+	}
+}
