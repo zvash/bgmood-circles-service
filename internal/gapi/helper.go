@@ -45,3 +45,14 @@ func (server *Server) getCircleForOwner(ctx context.Context, circleID uuid.UUID)
 	}
 	return circle, nil
 }
+
+func internalServerError() error {
+	return status.Errorf(codes.Internal, "internal server error.")
+}
+
+func uniqueOrInternalError(err error) error {
+	if errors.Is(err, db.ErrUniqueViolation) {
+		return status.Errorf(codes.AlreadyExists, "record already exists")
+	}
+	return internalServerError()
+}

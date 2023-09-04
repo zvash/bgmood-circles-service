@@ -91,3 +91,9 @@ func cpbKickFromCircleRequestToValKickFromCircleRequest(req *cpb.KickFromCircleR
 		UserID:   req.GetUserId(),
 	}
 }
+
+func cpbSendJoinRequestRequestToValSendJoinRequestRequest(req *cpb.SendJoinRequestRequest) val.SendJoinRequestRequest {
+	return val.SendJoinRequestRequest{
+		CircleID: req.GetCircleId(),
+	}
+}
