@@ -84,3 +84,10 @@ func cpbInviteUserToCircleRequestToValInviteUserToCircleRequest(req *cpb.InviteU
 		UserID:   req.GetUserId(),
 	}
 }
+
+func cpbKickFromCircleRequestToValKickFromCircleRequest(req *cpb.KickFromCircleRequest) val.KickFromCircleRequest {
+	return val.KickFromCircleRequest{
+		CircleID: req.GetCircleId(),
+		UserID:   req.GetUserId(),
+	}
+}

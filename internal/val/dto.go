@@ -20,3 +20,8 @@ type InviteUserToCircleRequest struct {
 	CircleID string `json:"circle_id" validate:"required,uuid"`
 	UserID   string `json:"user_id" validate:"required,uuid"`
 }
+
+type KickFromCircleRequest struct {
+	CircleID string `json:"circle_id" validate:"required,uuid"`
+	UserID   string `json:"user_id" validate:"required,uuid"`
+}
