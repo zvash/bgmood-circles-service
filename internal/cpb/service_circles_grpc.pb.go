@@ -4,7 +4,7 @@
 // - protoc             v4.23.4
 // source: service_circles.proto
 
-package circlespb
+package cpb
 
 import (
 	context "context"
@@ -19,29 +19,29 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Circles_CreateCircle_FullMethodName               = "/circlespb.Circles/CreateCircle"
-	Circles_EditCircle_FullMethodName                 = "/circlespb.Circles/EditCircle"
-	Circles_DestroyCircle_FullMethodName              = "/circlespb.Circles/DestroyCircle"
-	Circles_InviteUserToCircle_FullMethodName         = "/circlespb.Circles/InviteUserToCircle"
-	Circles_RollbackInviteUserToCircle_FullMethodName = "/circlespb.Circles/RollbackInviteUserToCircle"
-	Circles_KickFromCircle_FullMethodName             = "/circlespb.Circles/KickFromCircle"
-	Circles_SendJoinRequest_FullMethodName            = "/circlespb.Circles/SendJoinRequest"
-	Circles_AcceptJoinRequest_FullMethodName          = "/circlespb.Circles/AcceptJoinRequest"
-	Circles_RemoveJoinRequest_FullMethodName          = "/circlespb.Circles/RemoveJoinRequest"
-	Circles_LeaveCircle_FullMethodName                = "/circlespb.Circles/LeaveCircle"
-	Circles_GetJoinedCircles_FullMethodName           = "/circlespb.Circles/GetJoinedCircles"
-	Circles_GetRequestedCircles_FullMethodName        = "/circlespb.Circles/GetRequestedCircles"
-	Circles_ViewCircle_FullMethodName                 = "/circlespb.Circles/ViewCircle"
-	Circles_ExploreCircles_FullMethodName             = "/circlespb.Circles/ExploreCircles"
-	Circles_PromoteToPoster_FullMethodName            = "/circlespb.Circles/PromoteToPoster"
-	Circles_PromoteToAdmin_FullMethodName             = "/circlespb.Circles/PromoteToAdmin"
-	Circles_DemoteToViewer_FullMethodName             = "/circlespb.Circles/DemoteToViewer"
-	Circles_GetCircleWPChangeAccess_FullMethodName    = "/circlespb.Circles/GetCircleWPChangeAccess"
-	Circles_SetCircleWPChangeAccess_FullMethodName    = "/circlespb.Circles/SetCircleWPChangeAccess"
-	Circles_CreateMood_FullMethodName                 = "/circlespb.Circles/CreateMood"
-	Circles_React_FullMethodName                      = "/circlespb.Circles/React"
-	Circles_RemoveReaction_FullMethodName             = "/circlespb.Circles/RemoveReaction"
-	Circles_GetAvailableReactions_FullMethodName      = "/circlespb.Circles/GetAvailableReactions"
+	Circles_CreateCircle_FullMethodName               = "/cpb.Circles/CreateCircle"
+	Circles_EditCircle_FullMethodName                 = "/cpb.Circles/EditCircle"
+	Circles_DestroyCircle_FullMethodName              = "/cpb.Circles/DestroyCircle"
+	Circles_InviteUserToCircle_FullMethodName         = "/cpb.Circles/InviteUserToCircle"
+	Circles_RollbackInviteUserToCircle_FullMethodName = "/cpb.Circles/RollbackInviteUserToCircle"
+	Circles_KickFromCircle_FullMethodName             = "/cpb.Circles/KickFromCircle"
+	Circles_SendJoinRequest_FullMethodName            = "/cpb.Circles/SendJoinRequest"
+	Circles_AcceptJoinRequest_FullMethodName          = "/cpb.Circles/AcceptJoinRequest"
+	Circles_RemoveJoinRequest_FullMethodName          = "/cpb.Circles/RemoveJoinRequest"
+	Circles_LeaveCircle_FullMethodName                = "/cpb.Circles/LeaveCircle"
+	Circles_GetJoinedCircles_FullMethodName           = "/cpb.Circles/GetJoinedCircles"
+	Circles_GetRequestedCircles_FullMethodName        = "/cpb.Circles/GetRequestedCircles"
+	Circles_ViewCircle_FullMethodName                 = "/cpb.Circles/ViewCircle"
+	Circles_ExploreCircles_FullMethodName             = "/cpb.Circles/ExploreCircles"
+	Circles_PromoteToPoster_FullMethodName            = "/cpb.Circles/PromoteToPoster"
+	Circles_PromoteToAdmin_FullMethodName             = "/cpb.Circles/PromoteToAdmin"
+	Circles_DemoteToViewer_FullMethodName             = "/cpb.Circles/DemoteToViewer"
+	Circles_GetCircleWPChangeAccess_FullMethodName    = "/cpb.Circles/GetCircleWPChangeAccess"
+	Circles_SetCircleWPChangeAccess_FullMethodName    = "/cpb.Circles/SetCircleWPChangeAccess"
+	Circles_CreateMood_FullMethodName                 = "/cpb.Circles/CreateMood"
+	Circles_React_FullMethodName                      = "/cpb.Circles/React"
+	Circles_RemoveReaction_FullMethodName             = "/cpb.Circles/RemoveReaction"
+	Circles_GetAvailableReactions_FullMethodName      = "/cpb.Circles/GetAvailableReactions"
 )
 
 // CirclesClient is the client API for Circles service.
@@ -822,7 +822,7 @@ func _Circles_GetAvailableReactions_Handler(srv interface{}, ctx context.Context
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Circles_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "circlespb.Circles",
+	ServiceName: "cpb.Circles",
 	HandlerType: (*CirclesServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

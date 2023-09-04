@@ -667,19 +667,21 @@ SET title            = COALESCE($1::varchar, title),
     description      = COALESCE($3::text, description),
     is_private       = COALESCE($4::boolean, is_private),
     is_featured      = COALESCE($5::boolean, is_featured),
-    display_duration = COALESCE($6::int, display_duration)
-WHERE id = $7::uuid
+    display_duration = COALESCE($6::int, display_duration),
+    circle_tyoe = COALESCE($7::circle_type, circle_type)
+WHERE id = $8::uuid
 RETURNING id, owner_id, title, avatar, description, circle_type, is_private, is_featured, display_duration, created_at, deleted_at
 `
 
 type UpdateCircleParams struct {
-	Title           pgtype.Text `json:"title"`
-	Avatar          pgtype.Text `json:"avatar"`
-	Description     pgtype.Text `json:"description"`
-	IsPrivate       pgtype.Bool `json:"is_private"`
-	IsFeatured      pgtype.Bool `json:"is_featured"`
-	DisplayDuration pgtype.Int4 `json:"display_duration"`
-	ID              uuid.UUID   `json:"id"`
+	Title           pgtype.Text    `json:"title"`
+	Avatar          pgtype.Text    `json:"avatar"`
+	Description     pgtype.Text    `json:"description"`
+	IsPrivate       pgtype.Bool    `json:"is_private"`
+	IsFeatured      pgtype.Bool    `json:"is_featured"`
+	DisplayDuration pgtype.Int4    `json:"display_duration"`
+	CircleType      NullCircleType `json:"circle_type"`
+	ID              uuid.UUID      `json:"id"`
 }
 
 func (q *Queries) UpdateCircle(ctx context.Context, arg UpdateCircleParams) (Circle, error) {
@@ -690,6 +692,7 @@ func (q *Queries) UpdateCircle(ctx context.Context, arg UpdateCircleParams) (Cir
 		arg.IsPrivate,
 		arg.IsFeatured,
 		arg.DisplayDuration,
+		arg.CircleType,
 		arg.ID,
 	)
 	var i Circle

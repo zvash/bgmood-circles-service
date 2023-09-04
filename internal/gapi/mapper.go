@@ -3,7 +3,7 @@ package gapi
 import (
 	"fmt"
 	"github.com/iancoleman/strcase"
-	"github.com/zvash/bgmood-circles-service/internal/circlespb"
+	"github.com/zvash/bgmood-circles-service/internal/cpb"
 	"github.com/zvash/bgmood-circles-service/internal/db/repository"
 	"github.com/zvash/bgmood-circles-service/internal/val"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -42,7 +42,7 @@ func errorResponsesToStatusErrors(errs []val.ErrorResponse) error {
 	return statusDetails.Err()
 }
 
-func circlespbCreateCircleRequestToValCreateCircleRequest(req *circlespb.CreateCircleRequest) val.CreateCircleRequest {
+func cpbCreateCircleRequestToValCreateCircleRequest(req *cpb.CreateCircleRequest) val.CreateCircleRequest {
 	return val.CreateCircleRequest{
 		Title:       req.Title,
 		Avatar:      req.Avatar,
@@ -52,8 +52,8 @@ func circlespbCreateCircleRequestToValCreateCircleRequest(req *circlespb.CreateC
 	}
 }
 
-func dbCircleToCriclespbCircle(circle repository.Circle) *circlespb.Circle {
-	cCircle := &circlespb.Circle{
+func dbCircleToCPBCircle(circle repository.Circle) *cpb.Circle {
+	cCircle := &cpb.Circle{
 		Id:         circle.ID.String(),
 		OwnerId:    circle.OwnerID.String(),
 		Title:      circle.Title,
@@ -66,4 +66,14 @@ func dbCircleToCriclespbCircle(circle repository.Circle) *circlespb.Circle {
 		cCircle.Description = circle.Description.String
 	}
 	return cCircle
+}
+
+func cpbEditCircleRequestToValEditCircleRequest(req *cpb.EditCircleRequest) val.EditCircleRequest {
+	return val.EditCircleRequest{
+		Title:       req.GetTitle(),
+		Avatar:      req.GetAvatar(),
+		Description: req.GetDescription(),
+		CircleType:  req.GetCircleType(),
+		IsPrivate:   req.GetIsPrivate(),
+	}
 }

@@ -4,14 +4,14 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/zvash/bgmood-circles-service/internal/circlespb"
+	"github.com/zvash/bgmood-circles-service/internal/cpb"
 	"github.com/zvash/bgmood-circles-service/internal/db/repository"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) CreateCircle(ctx context.Context, req *circlespb.CreateCircleRequest) (*circlespb.CreateCircleResponse, error) {
-	dto := circlespbCreateCircleRequestToValCreateCircleRequest(req)
+func (server *Server) CreateCircle(ctx context.Context, req *cpb.CreateCircleRequest) (*cpb.CreateCircleResponse, error) {
+	dto := cpbCreateCircleRequestToValCreateCircleRequest(req)
 	if errs := server.validator.Validate(dto); errs != nil {
 		return nil, errorResponsesToStatusErrors(errs)
 	}
@@ -39,8 +39,8 @@ func (server *Server) CreateCircle(ctx context.Context, req *circlespb.CreateCir
 		IsFeatured:  false,
 	}
 	circle, err := server.db.CreateCircleTransaction(ctx, params)
-	resp := &circlespb.CreateCircleResponse{
-		Circle: dbCircleToCriclespbCircle(circle),
+	resp := &cpb.CreateCircleResponse{
+		Circle: dbCircleToCPBCircle(circle),
 	}
 	return resp, nil
 }

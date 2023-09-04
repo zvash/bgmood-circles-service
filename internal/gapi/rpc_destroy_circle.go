@@ -5,14 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/zvash/bgmood-circles-service/internal/circlespb"
+	"github.com/zvash/bgmood-circles-service/internal/cpb"
 	"github.com/zvash/bgmood-circles-service/internal/db"
 	"github.com/zvash/bgmood-circles-service/internal/db/repository"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) DestroyCircle(ctx context.Context, req *circlespb.DestroyCircleRequest) (*circlespb.DestroyCircleResponse, error) {
+func (server *Server) DestroyCircle(ctx context.Context, req *cpb.DestroyCircleRequest) (*cpb.DestroyCircleResponse, error) {
 	user, err := server.extractUserFromContext(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthorized.")
@@ -39,7 +39,7 @@ func (server *Server) DestroyCircle(ctx context.Context, req *circlespb.DestroyC
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "internal server error.")
 	}
-	resp := &circlespb.DestroyCircleResponse{
+	resp := &cpb.DestroyCircleResponse{
 		Message: fmt.Sprintf("Successfully removed circle with id: %s", circle.ID.String()),
 	}
 	return resp, nil

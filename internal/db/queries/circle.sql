@@ -102,7 +102,8 @@ SET title            = COALESCE(sqlc.narg(title)::varchar, title),
     description      = COALESCE(sqlc.narg(description)::text, description),
     is_private       = COALESCE(sqlc.narg(is_private)::boolean, is_private),
     is_featured      = COALESCE(sqlc.narg(is_featured)::boolean, is_featured),
-    display_duration = COALESCE(sqlc.narg(display_duration)::int, display_duration)
+    display_duration = COALESCE(sqlc.narg(display_duration)::int, display_duration),
+    circle_tyoe      = COALESCE(sqlc.narg(circle_type)::circle_type, circle_type)
 WHERE id = sqlc.arg(id)::uuid
 RETURNING *;
 
