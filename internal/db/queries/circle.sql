@@ -77,6 +77,15 @@ FROM circles c,
 WHERE cjr.circle_id = c.id
   AND cjr.user_id = $1;
 
+-- name: ListRequestedCirclesPaginated :many
+SELECT c.*
+FROM circles c,
+     circle_join_requests cjr
+WHERE cjr.circle_id = c.id
+  AND cjr.user_id = $1
+ORDER BY cjr.id DESC
+OFFSET $2 LIMIT $3;;
+
 -- name: ListInvitations :many
 SELECT c.*
 FROM circles c,

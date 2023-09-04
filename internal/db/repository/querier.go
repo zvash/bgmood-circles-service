@@ -33,6 +33,7 @@ type Querier interface {
 	ListJoinedCircles(ctx context.Context, memberID uuid.UUID) ([]Circle, error)
 	ListJoinedCirclesPaginated(ctx context.Context, arg ListJoinedCirclesPaginatedParams) ([]Circle, error)
 	ListRequestedCircles(ctx context.Context, userID uuid.UUID) ([]Circle, error)
+	ListRequestedCirclesPaginated(ctx context.Context, arg ListRequestedCirclesPaginatedParams) ([]Circle, error)
 	ReactToMood(ctx context.Context, arg ReactToMoodParams) (MoodReaction, error)
 	RemoveAllCircleMembers(ctx context.Context, circleID uuid.UUID) error
 	RemoveAllCircleTags(ctx context.Context, circleID uuid.UUID) error

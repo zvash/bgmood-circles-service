@@ -45,3 +45,7 @@ type LeaveCircleRequest struct {
 type GetJoinedCirclesRequest struct {
 	Page int64 `json:"page" validate:"required,number,min=1"`
 }
+
+type GetRequestedCirclesRequest struct {
+	Page int64 `json:"page" validate:"required,number,min=1"`
+}

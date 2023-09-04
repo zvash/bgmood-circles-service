@@ -555,6 +555,54 @@ func (q *Queries) ListRequestedCircles(ctx context.Context, userID uuid.UUID) ([
 	return items, nil
 }
 
+const listRequestedCirclesPaginated = `-- name: ListRequestedCirclesPaginated :many
+SELECT c.id, c.owner_id, c.title, c.avatar, c.description, c.circle_type, c.is_private, c.is_featured, c.display_duration, c.created_at, c.deleted_at
+FROM circles c,
+     circle_join_requests cjr
+WHERE cjr.circle_id = c.id
+  AND cjr.user_id = $1
+ORDER BY cjr.id DESC
+OFFSET $2 LIMIT $3
+`
+
+type ListRequestedCirclesPaginatedParams struct {
+	UserID uuid.UUID `json:"user_id"`
+	Offset int32     `json:"offset"`
+	Limit  int32     `json:"limit"`
+}
+
+func (q *Queries) ListRequestedCirclesPaginated(ctx context.Context, arg ListRequestedCirclesPaginatedParams) ([]Circle, error) {
+	rows, err := q.db.Query(ctx, listRequestedCirclesPaginated, arg.UserID, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Circle{}
+	for rows.Next() {
+		var i Circle
+		if err := rows.Scan(
+			&i.ID,
+			&i.OwnerID,
+			&i.Title,
+			&i.Avatar,
+			&i.Description,
+			&i.CircleType,
+			&i.IsPrivate,
+			&i.IsFeatured,
+			&i.DisplayDuration,
+			&i.CreatedAt,
+			&i.DeletedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const removeAllCircleMembers = `-- name: RemoveAllCircleMembers :exec
 DELETE
 FROM circle_members
