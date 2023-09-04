@@ -189,7 +189,7 @@ func (q *Queries) DenyWPChangeAccessToCircle(ctx context.Context, arg DenyWPChan
 	return i, err
 }
 
-const displayCircleToUser = `-- name: DisplayCircleToUser :one
+const displayCircleForUser = `-- name: DisplayCircleForUser :one
 SELECT c.id, c.owner_id, c.title, c.avatar, c.description, c.circle_type, c.is_private, c.is_featured, c.display_duration, c.created_at, c.deleted_at, (CASE WHEN cm.circle_id THEN FALSE ELSE TRUE END) as is_member
 FROM circles c
          LEFT JOIN circle_members cm ON c.id = cm.circle_id
@@ -197,12 +197,12 @@ WHERE c.id = $1
   AND (c.circle_type = 'HALL' OR cm.member_id = $2)
 `
 
-type DisplayCircleToUserParams struct {
+type DisplayCircleForUserParams struct {
 	ID       uuid.UUID `json:"id"`
 	MemberID uuid.UUID `json:"member_id"`
 }
 
-type DisplayCircleToUserRow struct {
+type DisplayCircleForUserRow struct {
 	ID              uuid.UUID          `json:"id"`
 	OwnerID         uuid.UUID          `json:"owner_id"`
 	Title           string             `json:"title"`
@@ -217,9 +217,9 @@ type DisplayCircleToUserRow struct {
 	IsMember        bool               `json:"is_member"`
 }
 
-func (q *Queries) DisplayCircleToUser(ctx context.Context, arg DisplayCircleToUserParams) (DisplayCircleToUserRow, error) {
-	row := q.db.QueryRow(ctx, displayCircleToUser, arg.ID, arg.MemberID)
-	var i DisplayCircleToUserRow
+func (q *Queries) DisplayCircleForUser(ctx context.Context, arg DisplayCircleForUserParams) (DisplayCircleForUserRow, error) {
+	row := q.db.QueryRow(ctx, displayCircleForUser, arg.ID, arg.MemberID)
+	var i DisplayCircleForUserRow
 	err := row.Scan(
 		&i.ID,
 		&i.OwnerID,
@@ -235,6 +235,62 @@ func (q *Queries) DisplayCircleToUser(ctx context.Context, arg DisplayCircleToUs
 		&i.IsMember,
 	)
 	return i, err
+}
+
+const exploreCirclesForUser = `-- name: ExploreCirclesForUser :many
+SELECT c.id, c.owner_id, c.title, c.avatar, c.description, c.circle_type, c.is_private, c.is_featured, c.display_duration, c.created_at, c.deleted_at, (CASE WHEN cm.circle_id THEN FALSE ELSE TRUE END) as is_member
+FROM circles c
+         LEFT JOIN circle_members cm ON c.id = cm.circle_id
+WHERE c.circle_type = 'HALL'
+   OR cm.member_id = $1
+`
+
+type ExploreCirclesForUserRow struct {
+	ID              uuid.UUID          `json:"id"`
+	OwnerID         uuid.UUID          `json:"owner_id"`
+	Title           string             `json:"title"`
+	Avatar          pgtype.Text        `json:"avatar"`
+	Description     pgtype.Text        `json:"description"`
+	CircleType      CircleType         `json:"circle_type"`
+	IsPrivate       bool               `json:"is_private"`
+	IsFeatured      bool               `json:"is_featured"`
+	DisplayDuration int32              `json:"display_duration"`
+	CreatedAt       time.Time          `json:"created_at"`
+	DeletedAt       pgtype.Timestamptz `json:"deleted_at"`
+	IsMember        bool               `json:"is_member"`
+}
+
+func (q *Queries) ExploreCirclesForUser(ctx context.Context, memberID uuid.UUID) ([]ExploreCirclesForUserRow, error) {
+	rows, err := q.db.Query(ctx, exploreCirclesForUser, memberID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ExploreCirclesForUserRow{}
+	for rows.Next() {
+		var i ExploreCirclesForUserRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.OwnerID,
+			&i.Title,
+			&i.Avatar,
+			&i.Description,
+			&i.CircleType,
+			&i.IsPrivate,
+			&i.IsFeatured,
+			&i.DisplayDuration,
+			&i.CreatedAt,
+			&i.DeletedAt,
+			&i.IsMember,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const exploreCirclesPaginated = `-- name: ExploreCirclesPaginated :many

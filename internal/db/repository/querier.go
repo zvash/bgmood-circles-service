@@ -19,7 +19,8 @@ type Querier interface {
 	CreateMood(ctx context.Context, arg CreateMoodParams) (Mood, error)
 	DeleteCircle(ctx context.Context, id uuid.UUID) error
 	DenyWPChangeAccessToCircle(ctx context.Context, arg DenyWPChangeAccessToCircleParams) (CircleMember, error)
-	DisplayCircleToUser(ctx context.Context, arg DisplayCircleToUserParams) (DisplayCircleToUserRow, error)
+	DisplayCircleForUser(ctx context.Context, arg DisplayCircleForUserParams) (DisplayCircleForUserRow, error)
+	ExploreCirclesForUser(ctx context.Context, memberID uuid.UUID) ([]ExploreCirclesForUserRow, error)
 	ExploreCirclesPaginated(ctx context.Context, arg ExploreCirclesPaginatedParams) ([]Circle, error)
 	GetCircle(ctx context.Context, id uuid.UUID) (Circle, error)
 	GetCircleMoods(ctx context.Context, circleID uuid.UUID) ([]Mood, error)

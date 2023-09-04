@@ -49,7 +49,7 @@ func (server *Server) getCircleForOwner(ctx context.Context, circleID uuid.UUID)
 }
 
 func (server *Server) getCircleMeta(ctx context.Context, circleID uuid.UUID, userID uuid.UUID) (*cpb.CircleMeta, error) {
-	circle, err := server.db.DisplayCircleToUser(ctx, repository.DisplayCircleToUserParams{
+	circle, err := server.db.DisplayCircleForUser(ctx, repository.DisplayCircleForUserParams{
 		ID:       circleID,
 		MemberID: userID,
 	})
