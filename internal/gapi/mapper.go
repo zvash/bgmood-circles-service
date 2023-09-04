@@ -77,3 +77,10 @@ func cpbEditCircleRequestToValEditCircleRequest(req *cpb.EditCircleRequest) val.
 		IsPrivate:   req.GetIsPrivate(),
 	}
 }
+
+func cpbInviteUserToCircleRequestToValInviteUserToCircleRequest(req *cpb.InviteUserToCircleRequest) val.InviteUserToCircleRequest {
+	return val.InviteUserToCircleRequest{
+		CircleID: req.GetCircleId(),
+		UserID:   req.GetUserId(),
+	}
+}

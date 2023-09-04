@@ -12,6 +12,7 @@ type DataStore interface {
 	repository.Querier
 	CreateCircleTransaction(context.Context, repository.CreateCircleParams) (repository.Circle, error)
 	RemoveCircleTransaction(ctx context.Context, circleId uuid.UUID) error
+	InviteToCircleTransaction(context.Context, InviteToCircleTransactionParams) (repository.CircleInvitation, error)
 }
 
 type SQLStore struct {
