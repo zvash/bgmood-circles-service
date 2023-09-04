@@ -37,3 +37,7 @@ type AcceptJoinRequestRequest struct {
 type RemoveJoinRequestRequest struct {
 	JoinRequestID int64 `json:"join_request_id" validate:"required,number,min=1"`
 }
+
+type LeaveCircleRequest struct {
+	CircleID string `json:"circle_id" validate:"required,uuid"`
+}

@@ -109,3 +109,9 @@ func cpbRemoveJoinRequestRequestToValRemoveJoinRequestRequest(req *cpb.RemoveJoi
 		JoinRequestID: req.GetJoinRequestId(),
 	}
 }
+
+func cpbLeaveCircleRequestToValLeaveCircleRequest(req *cpb.LeaveCircleRequest) val.LeaveCircleRequest {
+	return val.LeaveCircleRequest{
+		CircleID: req.GetCircleId(),
+	}
+}
