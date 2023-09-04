@@ -33,3 +33,7 @@ type SendJoinRequestRequest struct {
 type AcceptJoinRequestRequest struct {
 	JoinRequestID int64 `json:"join_request_id" validate:"required,number,min=1"`
 }
+
+type RemoveJoinRequestRequest struct {
+	JoinRequestID int64 `json:"join_request_id" validate:"required,number,min=1"`
+}

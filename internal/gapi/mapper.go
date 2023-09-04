@@ -103,3 +103,9 @@ func cpbAcceptJoinRequestRequestToValAcceptJoinRequestRequest(req *cpb.AcceptJoi
 		JoinRequestID: req.GetJoinRequestId(),
 	}
 }
+
+func cpbRemoveJoinRequestRequestToValRemoveJoinRequestRequest(req *cpb.RemoveJoinRequestRequest) val.RemoveJoinRequestRequest {
+	return val.RemoveJoinRequestRequest{
+		JoinRequestID: req.GetJoinRequestId(),
+	}
+}
