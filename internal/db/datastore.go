@@ -14,6 +14,7 @@ type DataStore interface {
 	RemoveCircleTransaction(ctx context.Context, circleId uuid.UUID) error
 	InviteToCircleTransaction(context.Context, InviteToCircleTransactionParams) (repository.CircleInvitation, error)
 	AcceptJoinRequestTransaction(context.Context, AcceptJoinRequestTransactionParams) (repository.CircleMember, error)
+	CreateMoodTransaction(context.Context, CreateMoodTransactionParams) (repository.Mood, error)
 }
 
 type SQLStore struct {

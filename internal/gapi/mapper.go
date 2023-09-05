@@ -139,3 +139,12 @@ func cpbExploreCirclesRequestToValExploreCirclesRequest(req *cpb.ExploreCirclesR
 		Page: req.GetPage(),
 	}
 }
+
+func cpbCreateMoodRequestToValCreateMoodRequest(req *cpb.CreateMoodRequest) val.CreateMoodRequest {
+	return val.CreateMoodRequest{
+		CircleID:      req.GetCircleId(),
+		Image:         req.GetImage(),
+		SetBackground: req.GetSetBackground(),
+		Description:   req.GetDescription(),
+	}
+}

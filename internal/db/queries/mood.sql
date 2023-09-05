@@ -4,7 +4,7 @@ VALUES (sqlc.arg(id)::uuid,
         sqlc.arg(poster_id)::uuid,
         sqlc.arg(circle_id)::uuid,
         COALESCE(sqlc.narg(description)::text, description),
-        sqlc.arg(image)::uuid,
+        sqlc.arg(image)::text,
         sqlc.arg(set_background)::boolean)
 RETURNING *;
 

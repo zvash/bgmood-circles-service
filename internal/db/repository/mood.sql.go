@@ -18,7 +18,7 @@ VALUES ($1::uuid,
         $2::uuid,
         $3::uuid,
         COALESCE($4::text, description),
-        $5::uuid,
+        $5::text,
         $6::boolean)
 RETURNING id, poster_id, circle_id, description, image, set_background, created_at
 `
@@ -28,7 +28,7 @@ type CreateMoodParams struct {
 	PosterID      uuid.UUID   `json:"poster_id"`
 	CircleID      uuid.UUID   `json:"circle_id"`
 	Description   pgtype.Text `json:"description"`
-	Image         uuid.UUID   `json:"image"`
+	Image         string      `json:"image"`
 	SetBackground bool        `json:"set_background"`
 }
 

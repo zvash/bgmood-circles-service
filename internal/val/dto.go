@@ -57,3 +57,10 @@ type ViewCircleRequest struct {
 type ExploreCirclesRequest struct {
 	Page int64 `json:"page" validate:"required,number,min=1"`
 }
+
+type CreateMoodRequest struct {
+	CircleID      string `json:"circle_id" validate:"required,uuid"`
+	Image         string `json:"image" validate:"required"`
+	SetBackground bool   `json:"set_background" validate:"required"`
+	Description   string `json:"description" validate:"omitempty"`
+}
