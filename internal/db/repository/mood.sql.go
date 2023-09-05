@@ -54,6 +54,37 @@ func (q *Queries) CreateMood(ctx context.Context, arg CreateMoodParams) (Mood, e
 	return i, err
 }
 
+const getAvailableReactions = `-- name: GetAvailableReactions :many
+SELECT id, name, emoji, text_representation
+FROM reactions
+ORDER BY id
+`
+
+func (q *Queries) GetAvailableReactions(ctx context.Context) ([]Reaction, error) {
+	rows, err := q.db.Query(ctx, getAvailableReactions)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Reaction{}
+	for rows.Next() {
+		var i Reaction
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Emoji,
+			&i.TextRepresentation,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getCircleMoods = `-- name: GetCircleMoods :many
 SELECT id, poster_id, circle_id, description, image, set_background, created_at
 FROM moods

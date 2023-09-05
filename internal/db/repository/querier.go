@@ -24,6 +24,7 @@ type Querier interface {
 	DisplayCircleForUser(ctx context.Context, arg DisplayCircleForUserParams) (DisplayCircleForUserRow, error)
 	ExploreCirclesForUserPaginated(ctx context.Context, arg ExploreCirclesForUserPaginatedParams) ([]ExploreCirclesForUserPaginatedRow, error)
 	ExploreCirclesPaginated(ctx context.Context, arg ExploreCirclesPaginatedParams) ([]Circle, error)
+	GetAvailableReactions(ctx context.Context) ([]Reaction, error)
 	GetCircle(ctx context.Context, id uuid.UUID) (Circle, error)
 	GetCircleMember(ctx context.Context, arg GetCircleMemberParams) (CircleMember, error)
 	GetCircleMoods(ctx context.Context, circleID uuid.UUID) ([]Mood, error)

@@ -50,3 +50,8 @@ from reactions r
 WHERE mr.mood_id = $1
 GROUP BY r.id
 ORDER BY r.id;
+
+-- name: GetAvailableReactions :many
+SELECT *
+FROM reactions
+ORDER BY id;
