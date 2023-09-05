@@ -169,3 +169,25 @@ func cpbDemoteToViewerRequestToValDemoteToViewerRequest(req *cpb.DemoteToViewerR
 		UserID:   req.GetUserId(),
 	}
 }
+
+func cpbGetCircleWPChangeAccessRequestToValGetCircleWPChangeAccessRequest(req *cpb.GetCircleWPChangeAccessRequest) val.GetCircleWPChangeAccessRequest {
+	return val.GetCircleWPChangeAccessRequest{
+		CircleID: req.GetCircleId(),
+	}
+}
+
+func cpbSetCircleWPChangeAccessRequestToValSetCircleWPChangeAccessRequest(req *cpb.SetCircleWPChangeAccessRequest) val.SetCircleWPChangeAccessRequest {
+	accessType := "ASK_FIRST"
+	switch req.GetAccessType() {
+	case cpb.AccessType_ACCEPT_ALL:
+		accessType = "ACCEPT_ALL"
+	case cpb.AccessType_ASK_FIRST:
+		accessType = "ASK_FIRST"
+	case cpb.AccessType_REJECT_ALL:
+		accessType = "REJECT_ALL"
+	}
+	return val.SetCircleWPChangeAccessRequest{
+		CircleID:   req.GetCircleId(),
+		AccessType: accessType,
+	}
+}

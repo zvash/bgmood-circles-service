@@ -209,6 +209,12 @@ DELETE
 FROM circle_members
 WHERE circle_id = $1;
 
+-- name: GetCircleMember :one
+SELECT *
+FROM circle_members
+WHERE circle_id = $1
+  AND member_id = $2;
+
 -- name: RemoveAllCircleTags :exec
 DELETE
 FROM circle_tag

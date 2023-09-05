@@ -79,3 +79,12 @@ type DemoteToViewerRequest struct {
 	CircleID string `json:"circle_id" validate:"required,uuid"`
 	UserID   string `json:"user_id" validate:"required,uuid"`
 }
+
+type GetCircleWPChangeAccessRequest struct {
+	CircleID string `json:"circle_id" validate:"required,uuid"`
+}
+
+type SetCircleWPChangeAccessRequest struct {
+	CircleID   string `json:"circle_id" validate:"required,uuid"`
+	AccessType string `json:"access_type" validate:"required,oneof=ACCEPT_ALL,ASK_FIRST,REJECT_ALL"`
+}
