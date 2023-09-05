@@ -8,8 +8,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (server *Server) React(ctx context.Context, req *cpb.ReactRequest) (*cpb.MoodResponse, error) {
-	dto := cpbReactRequestToValReactRequest(req)
+func (server *Server) RemoveReaction(ctx context.Context, req *cpb.RemoveReactionRequest) (*cpb.MoodResponse, error) {
+	dto := cpbRemoveReactionRequestToValRemoveReactionRequest(req)
 	if errs := server.validator.Validate(dto); errs != nil {
 		return nil, errorResponsesToStatusErrors(errs)
 	}
@@ -35,11 +35,13 @@ func (server *Server) React(ctx context.Context, req *cpb.ReactRequest) (*cpb.Mo
 	if !isMember {
 		return nil, status.Errorf(codes.PermissionDenied, "unauthorized")
 	}
-	_, err = server.db.ReactToMood(ctx, repository.ReactToMoodParams{
-		MoodID:     moodUUID,
-		UserID:     userUUID,
-		ReactionID: dto.ReactionID,
+	err = server.db.RemoveReactToMood(ctx, repository.RemoveReactToMoodParams{
+		MoodID: moodUUID,
+		UserID: userUUID,
 	})
+	if err != nil {
+		return nil, notFoundOrInternalError(err)
+	}
 	if err != nil {
 		return nil, returnDBError(err)
 	}

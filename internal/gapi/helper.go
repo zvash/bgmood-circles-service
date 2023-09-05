@@ -142,11 +142,8 @@ func (server *Server) prepareChangingAccessToCircle(ctx context.Context, circleI
 	return
 }
 
-func (server *Server) getMoodAndReactions(ctx context.Context, moodID uuid.UUID, userID uuid.UUID) (*cpb.Mood, error) {
-	mood, err := server.db.GetMood(ctx, moodID)
-	if err != nil {
-		return nil, notFoundOrInternalError(err)
-	}
+func (server *Server) getMoodAndReactions(ctx context.Context, mood repository.Mood, userID uuid.UUID) (*cpb.Mood, error) {
+	moodID := mood.ID
 	moodReactions, err := server.db.GetMoodReactions(ctx, moodID)
 	if err != nil {
 		return nil, notFoundOrInternalError(err)
