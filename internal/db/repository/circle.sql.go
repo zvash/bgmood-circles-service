@@ -240,9 +240,13 @@ func (q *Queries) DisplayCircleForUser(ctx context.Context, arg DisplayCircleFor
 }
 
 const exploreCirclesForUserPaginated = `-- name: ExploreCirclesForUserPaginated :many
-SELECT c.id, c.owner_id, c.title, c.avatar, c.description, c.circle_type, c.is_private, c.is_featured, c.display_duration, c.created_at, c.deleted_at, count(cm.circle_id) as member_count, bool_or(cm.member_id IS NOT NULL AND cm.member_id = $1) as is_member
+SELECT c.id, c.owner_id, c.title, c.avatar, c.description, c.circle_type, c.is_private, c.is_featured, c.display_duration, c.created_at, c.deleted_at,
+       count(m.id)                                             as mood_count,
+       count(cm.circle_id)                                     as member_count,
+       bool_or(cm.member_id IS NOT NULL AND cm.member_id = $1) as is_member
 FROM circles c
          LEFT JOIN circle_members cm ON c.id = cm.circle_id
+         LEFT JOIN moods m ON c.id = m.circle_id
 WHERE c.circle_type = 'HALL'
    OR cm.member_id = $1
 GROUP BY cm.circle_id
@@ -268,6 +272,7 @@ type ExploreCirclesForUserPaginatedRow struct {
 	DisplayDuration int32              `json:"display_duration"`
 	CreatedAt       time.Time          `json:"created_at"`
 	DeletedAt       pgtype.Timestamptz `json:"deleted_at"`
+	MoodCount       int64              `json:"mood_count"`
 	MemberCount     int64              `json:"member_count"`
 	IsMember        bool               `json:"is_member"`
 }
@@ -293,6 +298,7 @@ func (q *Queries) ExploreCirclesForUserPaginated(ctx context.Context, arg Explor
 			&i.DisplayDuration,
 			&i.CreatedAt,
 			&i.DeletedAt,
+			&i.MoodCount,
 			&i.MemberCount,
 			&i.IsMember,
 		); err != nil {

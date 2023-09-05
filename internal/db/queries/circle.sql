@@ -202,9 +202,13 @@ ORDER BY is_member DESC
 LIMIT 1;
 
 -- name: ExploreCirclesForUserPaginated :many
-SELECT c.*, count(cm.circle_id) as member_count, bool_or(cm.member_id IS NOT NULL AND cm.member_id = $1) as is_member
+SELECT c.*,
+       count(m.id)                                             as mood_count,
+       count(cm.circle_id)                                     as member_count,
+       bool_or(cm.member_id IS NOT NULL AND cm.member_id = $1) as is_member
 FROM circles c
          LEFT JOIN circle_members cm ON c.id = cm.circle_id
+         LEFT JOIN moods m ON c.id = m.circle_id
 WHERE c.circle_type = 'HALL'
    OR cm.member_id = $1
 GROUP BY cm.circle_id
