@@ -17,12 +17,12 @@ type Server struct {
 	messagePublisher worker.MessagePublisher
 }
 
-func NewServer(config util.Config, dataStore db.DataStore, taskDistributor worker.MessagePublisher) (*Server, error) {
+func NewServer(config util.Config, dataStore db.DataStore, messagePublisher worker.MessagePublisher) (*Server, error) {
 	server := &Server{
 		config:           config,
 		db:               dataStore,
 		validator:        val.NewValidator(),
-		messagePublisher: taskDistributor,
+		messagePublisher: messagePublisher,
 	}
 
 	return server, nil
