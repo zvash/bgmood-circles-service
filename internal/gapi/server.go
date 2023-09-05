@@ -1,7 +1,7 @@
 package gapi
 
 import (
-	"github.com/zvash/bgmood-circles-service/internal/circlespb"
+	"github.com/zvash/bgmood-circles-service/internal/cpb"
 	"github.com/zvash/bgmood-circles-service/internal/db"
 	"github.com/zvash/bgmood-circles-service/internal/util"
 	"github.com/zvash/bgmood-circles-service/internal/val"
@@ -10,7 +10,7 @@ import (
 
 // Server serves gRPC requests for our auth service.
 type Server struct {
-	circlespb.UnimplementedCirclesServer
+	cpb.UnimplementedCirclesServer
 	config           util.Config
 	db               db.DataStore
 	validator        *val.XValidator

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/hibiken/asynq"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/zvash/bgmood-circles-service/internal/circlespb"
+	"github.com/zvash/bgmood-circles-service/internal/cpb"
 	"github.com/zvash/bgmood-circles-service/internal/db"
 	"github.com/zvash/bgmood-circles-service/internal/gapi"
 	"github.com/zvash/bgmood-circles-service/internal/util"
@@ -60,7 +60,7 @@ func runGrpcServer(config util.Config, dataStore db.DataStore, messagePublisher 
 	}
 
 	grpcServer := grpc.NewServer()
-	circlespb.RegisterCirclesServer(grpcServer, server)
+	cpb.RegisterCirclesServer(grpcServer, server)
 	reflection.Register(grpcServer)
 
 	listener, err := net.Listen("tcp", config.GRPCServerAddress)
