@@ -148,3 +148,24 @@ func cpbCreateMoodRequestToValCreateMoodRequest(req *cpb.CreateMoodRequest) val.
 		Description:   req.GetDescription(),
 	}
 }
+
+func cpbPromoteToPosterRequestToValPromoteToPosterRequest(req *cpb.PromoteToPosterRequest) val.PromoteToPosterRequest {
+	return val.PromoteToPosterRequest{
+		CircleID: req.GetCircleId(),
+		UserID:   req.GetUserId(),
+	}
+}
+
+func cpbPromoteToAdminRequestToValPromoteToAdminRequest(req *cpb.PromoteToAdminRequest) val.PromoteToAdminRequest {
+	return val.PromoteToAdminRequest{
+		CircleID: req.GetCircleId(),
+		UserID:   req.GetUserId(),
+	}
+}
+
+func cpbDemoteToViewerRequestToValDemoteToViewerRequest(req *cpb.DemoteToViewerRequest) val.DemoteToViewerRequest {
+	return val.DemoteToViewerRequest{
+		CircleID: req.GetCircleId(),
+		UserID:   req.GetUserId(),
+	}
+}

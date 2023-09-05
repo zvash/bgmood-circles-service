@@ -64,3 +64,18 @@ type CreateMoodRequest struct {
 	SetBackground bool   `json:"set_background" validate:"required"`
 	Description   string `json:"description" validate:"omitempty"`
 }
+
+type PromoteToPosterRequest struct {
+	CircleID string `json:"circle_id" validate:"required,uuid"`
+	UserID   string `json:"user_id" validate:"required,uuid"`
+}
+
+type PromoteToAdminRequest struct {
+	CircleID string `json:"circle_id" validate:"required,uuid"`
+	UserID   string `json:"user_id" validate:"required,uuid"`
+}
+
+type DemoteToViewerRequest struct {
+	CircleID string `json:"circle_id" validate:"required,uuid"`
+	UserID   string `json:"user_id" validate:"required,uuid"`
+}

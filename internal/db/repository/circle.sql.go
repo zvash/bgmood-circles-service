@@ -72,12 +72,32 @@ func (q *Queries) AskForWPChangeByCircle(ctx context.Context, arg AskForWPChange
 	return i, err
 }
 
+const checkIfMemberCanChangeUsersAccess = `-- name: CheckIfMemberCanChangeUsersAccess :one
+SELECT EXISTS(SELECT TRUE
+              FROM circle_members
+              WHERE circle_id = $1
+                AND member_id = $2
+                AND membership_type IN ('OWNER', 'ADMIN'))
+`
+
+type CheckIfMemberCanChangeUsersAccessParams struct {
+	CircleID uuid.UUID `json:"circle_id"`
+	MemberID uuid.UUID `json:"member_id"`
+}
+
+func (q *Queries) CheckIfMemberCanChangeUsersAccess(ctx context.Context, arg CheckIfMemberCanChangeUsersAccessParams) (bool, error) {
+	row := q.db.QueryRow(ctx, checkIfMemberCanChangeUsersAccess, arg.CircleID, arg.MemberID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const checkIfMemberCanPostToCircle = `-- name: CheckIfMemberCanPostToCircle :one
 SELECT EXISTS(SELECT TRUE
               FROM circle_members
               WHERE circle_id = $1
                 AND member_id = $2
-                AND membership_type IN ('OWNER', 'POSTER'))
+                AND membership_type IN ('OWNER', 'POSTER', 'ADMIN'))
 `
 
 type CheckIfMemberCanPostToCircleParams struct {
@@ -854,11 +874,18 @@ func (q *Queries) RemoveJoinRequest(ctx context.Context, arg RemoveJoinRequestPa
 const setCircleAccessToAdmin = `-- name: SetCircleAccessToAdmin :one
 UPDATE circle_members
 SET membership_type = 'ADMIN'
+WHERE circle_id = $1
+  AND member_id = $2
 RETURNING id, circle_id, member_id, membership_type, acceptance_type, created_at
 `
 
-func (q *Queries) SetCircleAccessToAdmin(ctx context.Context) (CircleMember, error) {
-	row := q.db.QueryRow(ctx, setCircleAccessToAdmin)
+type SetCircleAccessToAdminParams struct {
+	CircleID uuid.UUID `json:"circle_id"`
+	MemberID uuid.UUID `json:"member_id"`
+}
+
+func (q *Queries) SetCircleAccessToAdmin(ctx context.Context, arg SetCircleAccessToAdminParams) (CircleMember, error) {
+	row := q.db.QueryRow(ctx, setCircleAccessToAdmin, arg.CircleID, arg.MemberID)
 	var i CircleMember
 	err := row.Scan(
 		&i.ID,
@@ -874,11 +901,18 @@ func (q *Queries) SetCircleAccessToAdmin(ctx context.Context) (CircleMember, err
 const setCircleAccessToOwner = `-- name: SetCircleAccessToOwner :one
 UPDATE circle_members
 SET membership_type = 'OWNER'
+WHERE circle_id = $1
+  AND member_id = $2
 RETURNING id, circle_id, member_id, membership_type, acceptance_type, created_at
 `
 
-func (q *Queries) SetCircleAccessToOwner(ctx context.Context) (CircleMember, error) {
-	row := q.db.QueryRow(ctx, setCircleAccessToOwner)
+type SetCircleAccessToOwnerParams struct {
+	CircleID uuid.UUID `json:"circle_id"`
+	MemberID uuid.UUID `json:"member_id"`
+}
+
+func (q *Queries) SetCircleAccessToOwner(ctx context.Context, arg SetCircleAccessToOwnerParams) (CircleMember, error) {
+	row := q.db.QueryRow(ctx, setCircleAccessToOwner, arg.CircleID, arg.MemberID)
 	var i CircleMember
 	err := row.Scan(
 		&i.ID,
@@ -894,11 +928,18 @@ func (q *Queries) SetCircleAccessToOwner(ctx context.Context) (CircleMember, err
 const setCircleAccessToPoster = `-- name: SetCircleAccessToPoster :one
 UPDATE circle_members
 SET membership_type = 'POSTER'
+WHERE circle_id = $1
+  AND member_id = $2
 RETURNING id, circle_id, member_id, membership_type, acceptance_type, created_at
 `
 
-func (q *Queries) SetCircleAccessToPoster(ctx context.Context) (CircleMember, error) {
-	row := q.db.QueryRow(ctx, setCircleAccessToPoster)
+type SetCircleAccessToPosterParams struct {
+	CircleID uuid.UUID `json:"circle_id"`
+	MemberID uuid.UUID `json:"member_id"`
+}
+
+func (q *Queries) SetCircleAccessToPoster(ctx context.Context, arg SetCircleAccessToPosterParams) (CircleMember, error) {
+	row := q.db.QueryRow(ctx, setCircleAccessToPoster, arg.CircleID, arg.MemberID)
 	var i CircleMember
 	err := row.Scan(
 		&i.ID,
@@ -914,11 +955,18 @@ func (q *Queries) SetCircleAccessToPoster(ctx context.Context) (CircleMember, er
 const setCircleAccessToViewer = `-- name: SetCircleAccessToViewer :one
 UPDATE circle_members
 SET membership_type = 'VIEWER'
+WHERE circle_id = $1
+  AND member_id = $2
 RETURNING id, circle_id, member_id, membership_type, acceptance_type, created_at
 `
 
-func (q *Queries) SetCircleAccessToViewer(ctx context.Context) (CircleMember, error) {
-	row := q.db.QueryRow(ctx, setCircleAccessToViewer)
+type SetCircleAccessToViewerParams struct {
+	CircleID uuid.UUID `json:"circle_id"`
+	MemberID uuid.UUID `json:"member_id"`
+}
+
+func (q *Queries) SetCircleAccessToViewer(ctx context.Context, arg SetCircleAccessToViewerParams) (CircleMember, error) {
+	row := q.db.QueryRow(ctx, setCircleAccessToViewer, arg.CircleID, arg.MemberID)
 	var i CircleMember
 	err := row.Scan(
 		&i.ID,

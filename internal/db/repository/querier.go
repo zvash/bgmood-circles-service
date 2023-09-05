@@ -13,6 +13,7 @@ import (
 type Querier interface {
 	AddMemberToCircle(ctx context.Context, arg AddMemberToCircleParams) (CircleMember, error)
 	AskForWPChangeByCircle(ctx context.Context, arg AskForWPChangeByCircleParams) (CircleMember, error)
+	CheckIfMemberCanChangeUsersAccess(ctx context.Context, arg CheckIfMemberCanChangeUsersAccessParams) (bool, error)
 	CheckIfMemberCanPostToCircle(ctx context.Context, arg CheckIfMemberCanPostToCircleParams) (bool, error)
 	CheckIfMemberExists(ctx context.Context, arg CheckIfMemberExistsParams) (bool, error)
 	CreateCircle(ctx context.Context, arg CreateCircleParams) (Circle, error)
@@ -47,10 +48,10 @@ type Querier interface {
 	RemoveInvitation(ctx context.Context, arg RemoveInvitationParams) error
 	RemoveJoinRequest(ctx context.Context, arg RemoveJoinRequestParams) error
 	RemoveReactToMood(ctx context.Context, arg RemoveReactToMoodParams) error
-	SetCircleAccessToAdmin(ctx context.Context) (CircleMember, error)
-	SetCircleAccessToOwner(ctx context.Context) (CircleMember, error)
-	SetCircleAccessToPoster(ctx context.Context) (CircleMember, error)
-	SetCircleAccessToViewer(ctx context.Context) (CircleMember, error)
+	SetCircleAccessToAdmin(ctx context.Context, arg SetCircleAccessToAdminParams) (CircleMember, error)
+	SetCircleAccessToOwner(ctx context.Context, arg SetCircleAccessToOwnerParams) (CircleMember, error)
+	SetCircleAccessToPoster(ctx context.Context, arg SetCircleAccessToPosterParams) (CircleMember, error)
+	SetCircleAccessToViewer(ctx context.Context, arg SetCircleAccessToViewerParams) (CircleMember, error)
 	SetCircleOwner(ctx context.Context, arg SetCircleOwnerParams) (CircleMember, error)
 	UpdateCircle(ctx context.Context, arg UpdateCircleParams) (Circle, error)
 }

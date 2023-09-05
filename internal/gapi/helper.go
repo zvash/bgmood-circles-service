@@ -114,6 +114,34 @@ func (server *Server) getExploredCirclesMeta(ctx context.Context, userID uuid.UU
 	return circlesMeta, nil
 }
 
+func (server *Server) prepareChangingAccessToCircle(ctx context.Context, circleID, userID string) (circleUUID uuid.UUID, memberUUID uuid.UUID, err error) {
+	circleUUID, err = stringToUUID(circleID)
+	if err != nil {
+		return
+	}
+	userUUID, err := server.getOwnerUUID(ctx)
+	if err != nil {
+		return
+	}
+	ok, err := server.db.CheckIfMemberCanChangeUsersAccess(ctx, repository.CheckIfMemberCanChangeUsersAccessParams{
+		MemberID: userUUID,
+		CircleID: circleUUID,
+	})
+	if err != nil {
+		err = notFoundOrInternalError(err)
+		return
+	}
+	if !ok {
+		err = status.Errorf(codes.PermissionDenied, "unauthorized")
+		return
+	}
+	memberUUID, err = stringToUUID(userID)
+	if err != nil {
+		return
+	}
+	return
+}
+
 func internalServerError() error {
 	return status.Errorf(codes.Internal, "internal server error.")
 }

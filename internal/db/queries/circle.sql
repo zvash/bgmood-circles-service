@@ -75,7 +75,14 @@ SELECT EXISTS(SELECT TRUE
               FROM circle_members
               WHERE circle_id = $1
                 AND member_id = $2
-                AND membership_type IN ('OWNER', 'POSTER'));
+                AND membership_type IN ('OWNER', 'POSTER', 'ADMIN'));
+
+-- name: CheckIfMemberCanChangeUsersAccess :one
+SELECT EXISTS(SELECT TRUE
+              FROM circle_members
+              WHERE circle_id = $1
+                AND member_id = $2
+                AND membership_type IN ('OWNER', 'ADMIN'));
 
 -- name: ListRequestedCircles :many
 SELECT c.*
@@ -165,21 +172,29 @@ RETURNING *;
 -- name: SetCircleAccessToAdmin :one
 UPDATE circle_members
 SET membership_type = 'ADMIN'
+WHERE circle_id = $1
+  AND member_id = $2
 RETURNING *;
 
 -- name: SetCircleAccessToPoster :one
 UPDATE circle_members
 SET membership_type = 'POSTER'
+WHERE circle_id = $1
+  AND member_id = $2
 RETURNING *;
 
 -- name: SetCircleAccessToViewer :one
 UPDATE circle_members
 SET membership_type = 'VIEWER'
+WHERE circle_id = $1
+  AND member_id = $2
 RETURNING *;
 
 -- name: SetCircleAccessToOwner :one
 UPDATE circle_members
 SET membership_type = 'OWNER'
+WHERE circle_id = $1
+  AND member_id = $2
 RETURNING *;
 
 -- name: ExploreCirclesPaginated :many
