@@ -68,7 +68,7 @@ func (server *Server) getCircleMeta(ctx context.Context, circleID uuid.UUID, use
 		CreatedAt:      timestamppb.New(circle.CreatedAt),
 		MoodCount:      0,
 		MemberCount:    0,
-		ViewerIsMember: circle.IsMember,
+		ViewerIsMember: circle.IsMember.Bool,
 	}
 	memberCount, err := server.db.GetMemberCount(ctx, circle.ID)
 	if err != nil {

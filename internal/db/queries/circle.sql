@@ -193,18 +193,23 @@ FROM circle_tag
 WHERE circle_id = $1;
 
 -- name: DisplayCircleForUser :one
-SELECT c.*, (CASE WHEN cm.circle_id THEN FALSE ELSE TRUE END) as is_member
+SELECT c.*, (cm.member_id IS NOT NULL AND cm.member_id = $2) as is_member
 FROM circles c
          LEFT JOIN circle_members cm ON c.id = cm.circle_id
 WHERE c.id = $1
-  AND (c.circle_type = 'HALL' OR cm.member_id = $2);
+  AND (cm.member_id = $2 OR c.circle_type = 'HALL')
+ORDER BY is_member DESC
+LIMIT 1;
 
--- name: ExploreCirclesForUser :many
-SELECT c.*, (CASE WHEN cm.circle_id THEN FALSE ELSE TRUE END) as is_member
+-- name: ExploreCirclesForUserPaginated :many
+SELECT c.*, count(cm.circle_id) as member_count, bool_or(cm.member_id IS NOT NULL AND cm.member_id = $1) as is_member
 FROM circles c
          LEFT JOIN circle_members cm ON c.id = cm.circle_id
 WHERE c.circle_type = 'HALL'
-   OR cm.member_id = $1;
+   OR cm.member_id = $1
+GROUP BY cm.circle_id
+ORDER BY c.created_at DESC
+OFFSET $2 LIMIT $3;
 
 
 -- name: GetMemberCount :one

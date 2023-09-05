@@ -190,11 +190,13 @@ func (q *Queries) DenyWPChangeAccessToCircle(ctx context.Context, arg DenyWPChan
 }
 
 const displayCircleForUser = `-- name: DisplayCircleForUser :one
-SELECT c.id, c.owner_id, c.title, c.avatar, c.description, c.circle_type, c.is_private, c.is_featured, c.display_duration, c.created_at, c.deleted_at, (CASE WHEN cm.circle_id THEN FALSE ELSE TRUE END) as is_member
+SELECT c.id, c.owner_id, c.title, c.avatar, c.description, c.circle_type, c.is_private, c.is_featured, c.display_duration, c.created_at, c.deleted_at, (cm.member_id IS NOT NULL AND cm.member_id = $2) as is_member
 FROM circles c
          LEFT JOIN circle_members cm ON c.id = cm.circle_id
 WHERE c.id = $1
-  AND (c.circle_type = 'HALL' OR cm.member_id = $2)
+  AND (cm.member_id = $2 OR c.circle_type = 'HALL')
+ORDER BY is_member DESC
+LIMIT 1
 `
 
 type DisplayCircleForUserParams struct {
@@ -214,7 +216,7 @@ type DisplayCircleForUserRow struct {
 	DisplayDuration int32              `json:"display_duration"`
 	CreatedAt       time.Time          `json:"created_at"`
 	DeletedAt       pgtype.Timestamptz `json:"deleted_at"`
-	IsMember        bool               `json:"is_member"`
+	IsMember        pgtype.Bool        `json:"is_member"`
 }
 
 func (q *Queries) DisplayCircleForUser(ctx context.Context, arg DisplayCircleForUserParams) (DisplayCircleForUserRow, error) {
@@ -237,15 +239,24 @@ func (q *Queries) DisplayCircleForUser(ctx context.Context, arg DisplayCircleFor
 	return i, err
 }
 
-const exploreCirclesForUser = `-- name: ExploreCirclesForUser :many
-SELECT c.id, c.owner_id, c.title, c.avatar, c.description, c.circle_type, c.is_private, c.is_featured, c.display_duration, c.created_at, c.deleted_at, (CASE WHEN cm.circle_id THEN FALSE ELSE TRUE END) as is_member
+const exploreCirclesForUserPaginated = `-- name: ExploreCirclesForUserPaginated :many
+SELECT c.id, c.owner_id, c.title, c.avatar, c.description, c.circle_type, c.is_private, c.is_featured, c.display_duration, c.created_at, c.deleted_at, count(cm.circle_id) as member_count, bool_or(cm.member_id IS NOT NULL AND cm.member_id = $1) as is_member
 FROM circles c
          LEFT JOIN circle_members cm ON c.id = cm.circle_id
 WHERE c.circle_type = 'HALL'
    OR cm.member_id = $1
+GROUP BY cm.circle_id
+ORDER BY c.created_at DESC
+OFFSET $2 LIMIT $3
 `
 
-type ExploreCirclesForUserRow struct {
+type ExploreCirclesForUserPaginatedParams struct {
+	MemberID uuid.UUID `json:"member_id"`
+	Offset   int32     `json:"offset"`
+	Limit    int32     `json:"limit"`
+}
+
+type ExploreCirclesForUserPaginatedRow struct {
 	ID              uuid.UUID          `json:"id"`
 	OwnerID         uuid.UUID          `json:"owner_id"`
 	Title           string             `json:"title"`
@@ -257,18 +268,19 @@ type ExploreCirclesForUserRow struct {
 	DisplayDuration int32              `json:"display_duration"`
 	CreatedAt       time.Time          `json:"created_at"`
 	DeletedAt       pgtype.Timestamptz `json:"deleted_at"`
+	MemberCount     int64              `json:"member_count"`
 	IsMember        bool               `json:"is_member"`
 }
 
-func (q *Queries) ExploreCirclesForUser(ctx context.Context, memberID uuid.UUID) ([]ExploreCirclesForUserRow, error) {
-	rows, err := q.db.Query(ctx, exploreCirclesForUser, memberID)
+func (q *Queries) ExploreCirclesForUserPaginated(ctx context.Context, arg ExploreCirclesForUserPaginatedParams) ([]ExploreCirclesForUserPaginatedRow, error) {
+	rows, err := q.db.Query(ctx, exploreCirclesForUserPaginated, arg.MemberID, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []ExploreCirclesForUserRow{}
+	items := []ExploreCirclesForUserPaginatedRow{}
 	for rows.Next() {
-		var i ExploreCirclesForUserRow
+		var i ExploreCirclesForUserPaginatedRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.OwnerID,
@@ -281,6 +293,7 @@ func (q *Queries) ExploreCirclesForUser(ctx context.Context, memberID uuid.UUID)
 			&i.DisplayDuration,
 			&i.CreatedAt,
 			&i.DeletedAt,
+			&i.MemberCount,
 			&i.IsMember,
 		); err != nil {
 			return nil, err

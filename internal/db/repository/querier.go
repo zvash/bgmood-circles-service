@@ -20,7 +20,7 @@ type Querier interface {
 	DeleteCircle(ctx context.Context, id uuid.UUID) error
 	DenyWPChangeAccessToCircle(ctx context.Context, arg DenyWPChangeAccessToCircleParams) (CircleMember, error)
 	DisplayCircleForUser(ctx context.Context, arg DisplayCircleForUserParams) (DisplayCircleForUserRow, error)
-	ExploreCirclesForUser(ctx context.Context, memberID uuid.UUID) ([]ExploreCirclesForUserRow, error)
+	ExploreCirclesForUserPaginated(ctx context.Context, arg ExploreCirclesForUserPaginatedParams) ([]ExploreCirclesForUserPaginatedRow, error)
 	ExploreCirclesPaginated(ctx context.Context, arg ExploreCirclesPaginatedParams) ([]Circle, error)
 	GetCircle(ctx context.Context, id uuid.UUID) (Circle, error)
 	GetCircleMoods(ctx context.Context, circleID uuid.UUID) ([]Mood, error)
