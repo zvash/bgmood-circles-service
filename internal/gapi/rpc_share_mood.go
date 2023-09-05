@@ -22,11 +22,22 @@ func (server *Server) CreateMood(ctx context.Context, req *cpb.CreateMoodRequest
 	if err != nil {
 		return nil, err
 	}
-	//instead of this check for user's access to the circle
-	circle, err := server.getCircleForOwner(ctx, circleUUID)
+	userUUID, err := server.getOwnerUUID(ctx)
 	if err != nil {
 		return nil, err
 	}
+
+	ok, err := server.db.CheckIfMemberCanPostToCircle(ctx, repository.CheckIfMemberCanPostToCircleParams{
+		MemberID: userUUID,
+		CircleID: circleUUID,
+	})
+	if err != nil {
+		return nil, notFoundOrInternalError(err)
+	}
+	if !ok {
+		return nil, status.Errorf(codes.PermissionDenied, "unauthorized")
+	}
+
 	moodUUID, err := uuid.NewRandom()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "could not create a random uuid: %v", err)
@@ -34,8 +45,8 @@ func (server *Server) CreateMood(ctx context.Context, req *cpb.CreateMoodRequest
 	mood, err := server.db.CreateMoodTransaction(ctx, db.CreateMoodTransactionParams{
 		CreateMoodParams: repository.CreateMoodParams{
 			ID:            moodUUID,
-			CircleID:      circle.ID,
-			PosterID:      circle.OwnerID,
+			CircleID:      circleUUID,
+			PosterID:      userUUID,
 			Image:         dto.Image,
 			Description:   pgtype.Text{String: dto.Description, Valid: dto.Description != ""},
 			SetBackground: dto.SetBackground,

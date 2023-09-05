@@ -72,6 +72,26 @@ func (q *Queries) AskForWPChangeByCircle(ctx context.Context, arg AskForWPChange
 	return i, err
 }
 
+const checkIfMemberCanPostToCircle = `-- name: CheckIfMemberCanPostToCircle :one
+SELECT EXISTS(SELECT TRUE
+              FROM circle_members
+              WHERE circle_id = $1
+                AND member_id = $2
+                AND membership_type IN ('OWNER', 'POSTER'))
+`
+
+type CheckIfMemberCanPostToCircleParams struct {
+	CircleID uuid.UUID `json:"circle_id"`
+	MemberID uuid.UUID `json:"member_id"`
+}
+
+func (q *Queries) CheckIfMemberCanPostToCircle(ctx context.Context, arg CheckIfMemberCanPostToCircleParams) (bool, error) {
+	row := q.db.QueryRow(ctx, checkIfMemberCanPostToCircle, arg.CircleID, arg.MemberID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const checkIfMemberExists = `-- name: CheckIfMemberExists :one
 SELECT EXISTS(SELECT 1 FROM circle_members WHERE circle_id = $1 AND member_id = $2)
 `
