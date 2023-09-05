@@ -83,6 +83,37 @@ func (server *Server) getCircleMeta(ctx context.Context, circleID uuid.UUID, use
 	return circleMeta, nil
 }
 
+func (server *Server) getExploredCirclesMeta(ctx context.Context, userID uuid.UUID, page int64) ([]*cpb.CircleMeta, error) {
+	var limit int32 = 10
+	circles, err := server.db.ExploreCirclesForUserPaginated(ctx, repository.ExploreCirclesForUserPaginatedParams{
+		MemberID: userID,
+		Offset:   int32(page-1) * limit,
+		Limit:    limit,
+	})
+	if err != nil {
+		return nil, notFoundOrInternalError(err)
+	}
+	circlesMeta := make([]*cpb.CircleMeta, 0)
+	for _, circle := range circles {
+		circleMeta := &cpb.CircleMeta{
+			Id:             circle.ID.String(),
+			OwnerId:        circle.OwnerID.String(),
+			Title:          circle.Title,
+			Avatar:         circle.Avatar.String,
+			Description:    circle.Description.String,
+			CircleType:     string(circle.CircleType),
+			IsPrivate:      circle.IsPrivate,
+			IsFeatured:     circle.IsFeatured,
+			CreatedAt:      timestamppb.New(circle.CreatedAt),
+			MoodCount:      circle.MoodCount,
+			MemberCount:    circle.MemberCount,
+			ViewerIsMember: circle.IsMember,
+		}
+		circlesMeta = append(circlesMeta, circleMeta)
+	}
+	return circlesMeta, nil
+}
+
 func internalServerError() error {
 	return status.Errorf(codes.Internal, "internal server error.")
 }
