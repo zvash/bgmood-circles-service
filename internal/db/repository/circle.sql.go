@@ -1005,6 +1005,34 @@ func (q *Queries) SetCircleAccessToViewer(ctx context.Context, arg SetCircleAcce
 	return i, err
 }
 
+const setCircleMemberAccess = `-- name: SetCircleMemberAccess :one
+UPDATE circle_members
+SET acceptance_type = $3
+WHERE circle_id = $1
+  AND member_id = $2
+RETURNING id, circle_id, member_id, membership_type, acceptance_type, created_at
+`
+
+type SetCircleMemberAccessParams struct {
+	CircleID       uuid.UUID      `json:"circle_id"`
+	MemberID       uuid.UUID      `json:"member_id"`
+	AcceptanceType AcceptanceType `json:"acceptance_type"`
+}
+
+func (q *Queries) SetCircleMemberAccess(ctx context.Context, arg SetCircleMemberAccessParams) (CircleMember, error) {
+	row := q.db.QueryRow(ctx, setCircleMemberAccess, arg.CircleID, arg.MemberID, arg.AcceptanceType)
+	var i CircleMember
+	err := row.Scan(
+		&i.ID,
+		&i.CircleID,
+		&i.MemberID,
+		&i.MembershipType,
+		&i.AcceptanceType,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const setCircleOwner = `-- name: SetCircleOwner :one
 INSERT INTO circle_members (circle_id, member_id, membership_type, acceptance_type)
 VALUES ($1, $2, 'OWNER', 'ASK_FIRST')

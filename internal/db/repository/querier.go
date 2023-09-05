@@ -53,6 +53,7 @@ type Querier interface {
 	SetCircleAccessToOwner(ctx context.Context, arg SetCircleAccessToOwnerParams) (CircleMember, error)
 	SetCircleAccessToPoster(ctx context.Context, arg SetCircleAccessToPosterParams) (CircleMember, error)
 	SetCircleAccessToViewer(ctx context.Context, arg SetCircleAccessToViewerParams) (CircleMember, error)
+	SetCircleMemberAccess(ctx context.Context, arg SetCircleMemberAccessParams) (CircleMember, error)
 	SetCircleOwner(ctx context.Context, arg SetCircleOwnerParams) (CircleMember, error)
 	UpdateCircle(ctx context.Context, arg UpdateCircleParams) (Circle, error)
 }

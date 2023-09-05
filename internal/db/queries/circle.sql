@@ -215,6 +215,13 @@ FROM circle_members
 WHERE circle_id = $1
   AND member_id = $2;
 
+-- name: SetCircleMemberAccess :one
+UPDATE circle_members
+SET acceptance_type = $3
+WHERE circle_id = $1
+  AND member_id = $2
+RETURNING *;
+
 -- name: RemoveAllCircleTags :exec
 DELETE
 FROM circle_tag
