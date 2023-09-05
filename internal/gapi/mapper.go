@@ -191,3 +191,16 @@ func cpbSetCircleWPChangeAccessRequestToValSetCircleWPChangeAccessRequest(req *c
 		AccessType: accessType,
 	}
 }
+
+func cpbReactRequestToValReactRequest(req *cpb.ReactRequest) val.ReactRequest {
+	return val.ReactRequest{
+		MoodID:     req.GetMoodId(),
+		ReactionID: req.GetReactionId(),
+	}
+}
+
+func cpbRemoveReactionRequestToValRemoveReactionRequest(req *cpb.RemoveReactionRequest) val.RemoveReactionRequest {
+	return val.RemoveReactionRequest{
+		MoodID: req.GetMoodId(),
+	}
+}

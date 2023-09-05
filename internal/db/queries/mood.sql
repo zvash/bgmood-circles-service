@@ -32,3 +32,21 @@ DELETE
 FROM mood_reactions
 WHERE mood_id = $1
   AND user_id = $2;
+
+-- name: GetUserMoodReaction :one
+SELECT *
+FROM reactions r
+WHERE id = (SELECT reaction_id FROM mood_reactions WHERE mood_id = $1 AND user_id = $2 LIMIT 1);
+
+-- name: GetMood :one
+SELECT *
+FROM moods
+WHERE id = $1;
+
+-- name: GetMoodReactions :many
+SELECT r.*, COUNT(mr.reaction_id) as reaction_count
+from reactions r
+         LEFT JOIN mood_reactions mr ON r.id = mr.reaction_id
+WHERE mr.mood_id = $1
+GROUP BY r.id
+ORDER BY r.id;

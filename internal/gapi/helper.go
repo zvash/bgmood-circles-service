@@ -142,6 +142,73 @@ func (server *Server) prepareChangingAccessToCircle(ctx context.Context, circleI
 	return
 }
 
+func (server *Server) getMoodAndReactions(ctx context.Context, moodID uuid.UUID, userID uuid.UUID) (*cpb.Mood, error) {
+	mood, err := server.db.GetMood(ctx, moodID)
+	if err != nil {
+		return nil, notFoundOrInternalError(err)
+	}
+	moodReactions, err := server.db.GetMoodReactions(ctx, moodID)
+	if err != nil {
+		return nil, notFoundOrInternalError(err)
+	}
+	var description *string
+	if mood.Description.Valid {
+		description = &mood.Description.String
+	}
+	reactions := make([]*cpb.ReactionAggregated, 0)
+	for _, moodReaction := range moodReactions {
+		var emoji *string
+		var textRepresentation *string
+		if moodReaction.Emoji.Valid {
+			emoji = &moodReaction.Emoji.String
+		}
+		if moodReaction.TextRepresentation.Valid {
+			textRepresentation = &moodReaction.TextRepresentation.String
+		}
+		r := &cpb.ReactionAggregated{
+			Id:                 moodReaction.ID,
+			Count:              moodReaction.ReactionCount,
+			Name:               moodReaction.Name,
+			Emoji:              emoji,
+			TextRepresentation: textRepresentation,
+		}
+		reactions = append(reactions, r)
+	}
+	var userMoodReaction *cpb.Reaction
+	dbUserMoodReaction, err := server.db.GetUserMoodReaction(ctx, repository.GetUserMoodReactionParams{
+		MoodID: moodID,
+		UserID: userID,
+	})
+	if err == nil {
+		var emoji *string
+		var textRepresentation *string
+		if dbUserMoodReaction.Emoji.Valid {
+			emoji = &dbUserMoodReaction.Emoji.String
+		}
+		if dbUserMoodReaction.TextRepresentation.Valid {
+			textRepresentation = &dbUserMoodReaction.TextRepresentation.String
+		}
+		userMoodReaction = &cpb.Reaction{
+			Id:                 dbUserMoodReaction.ID,
+			Name:               dbUserMoodReaction.Name,
+			Emoji:              emoji,
+			TextRepresentation: textRepresentation,
+		}
+	}
+	res := &cpb.Mood{
+		Id:              mood.ID.String(),
+		PosterId:        mood.PosterID.String(),
+		CircleId:        mood.CircleID.String(),
+		Image:           mood.Image,
+		SetBackground:   mood.SetBackground,
+		CreatedAt:       timestamppb.New(mood.CreatedAt),
+		Description:     description,
+		UserReaction:    userMoodReaction,
+		OthersReactions: reactions,
+	}
+	return res, nil
+}
+
 func internalServerError() error {
 	return status.Errorf(codes.Internal, "internal server error.")
 }

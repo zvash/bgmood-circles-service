@@ -88,3 +88,12 @@ type SetCircleWPChangeAccessRequest struct {
 	CircleID   string `json:"circle_id" validate:"required,uuid"`
 	AccessType string `json:"access_type" validate:"required,oneof=ACCEPT_ALL,ASK_FIRST,REJECT_ALL"`
 }
+
+type ReactRequest struct {
+	MoodID     string `json:"mood_id" validate:"required,uuid"`
+	ReactionID int64  `json:"reaction_id" validate:"required,number,min=0"`
+}
+
+type RemoveReactionRequest struct {
+	MoodID string `json:"mood_id" validate:"required,uuid"`
+}

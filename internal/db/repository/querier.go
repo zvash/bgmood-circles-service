@@ -30,8 +30,11 @@ type Querier interface {
 	GetCircleMoodsPaginated(ctx context.Context, arg GetCircleMoodsPaginatedParams) ([]Mood, error)
 	GetJoinRequest(ctx context.Context, id int64) (CircleJoinRequest, error)
 	GetMemberCount(ctx context.Context, circleID uuid.UUID) (int64, error)
+	GetMood(ctx context.Context, id uuid.UUID) (Mood, error)
 	GetMoodCount(ctx context.Context, circleID uuid.UUID) (int64, error)
+	GetMoodReactions(ctx context.Context, moodID uuid.UUID) ([]GetMoodReactionsRow, error)
 	GetUserCircle(ctx context.Context, arg GetUserCircleParams) (Circle, error)
+	GetUserMoodReaction(ctx context.Context, arg GetUserMoodReactionParams) (Reaction, error)
 	GrantWPChangeAccessToCircle(ctx context.Context, arg GrantWPChangeAccessToCircleParams) (CircleMember, error)
 	InviteToCircle(ctx context.Context, arg InviteToCircleParams) (CircleInvitation, error)
 	KickFromCircle(ctx context.Context, arg KickFromCircleParams) error
