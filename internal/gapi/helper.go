@@ -95,6 +95,7 @@ func (server *Server) getExploredCirclesMeta(ctx context.Context, userID uuid.UU
 	}
 	circlesMeta := make([]*cpb.CircleMeta, 0)
 	for _, circle := range circles {
+		//TODO: Gather CircleIDs and make this one single query
 		canPost, err := server.db.CheckIfMemberCanPostToCircle(ctx, repository.CheckIfMemberCanPostToCircleParams{
 			MemberID: userID,
 			CircleID: circle.ID,
