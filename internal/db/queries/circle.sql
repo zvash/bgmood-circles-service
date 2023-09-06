@@ -35,6 +35,13 @@ SELECt *
 FROM circle_join_requests
 WHERE id = $1;
 
+-- name: GetCircleJoinRequests :many
+SELECT *
+FROM circle_join_requests
+WHERE circle_id = $1
+ORDER BY id
+OFFSET $2 LIMIT $3;
+
 -- name: RemoveInvitation :exec
 DELETE
 FROM circle_invitations

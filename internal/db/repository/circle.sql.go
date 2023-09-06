@@ -422,6 +422,40 @@ func (q *Queries) GetCircle(ctx context.Context, id uuid.UUID) (Circle, error) {
 	return i, err
 }
 
+const getCircleJoinRequests = `-- name: GetCircleJoinRequests :many
+SELECT id, circle_id, user_id
+FROM circle_join_requests
+WHERE circle_id = $1
+ORDER BY id
+OFFSET $2 LIMIT $3
+`
+
+type GetCircleJoinRequestsParams struct {
+	CircleID uuid.UUID `json:"circle_id"`
+	Offset   int32     `json:"offset"`
+	Limit    int32     `json:"limit"`
+}
+
+func (q *Queries) GetCircleJoinRequests(ctx context.Context, arg GetCircleJoinRequestsParams) ([]CircleJoinRequest, error) {
+	rows, err := q.db.Query(ctx, getCircleJoinRequests, arg.CircleID, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []CircleJoinRequest{}
+	for rows.Next() {
+		var i CircleJoinRequest
+		if err := rows.Scan(&i.ID, &i.CircleID, &i.UserID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getCircleMember = `-- name: GetCircleMember :one
 SELECT id, circle_id, member_id, membership_type, acceptance_type, created_at
 FROM circle_members

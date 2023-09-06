@@ -42,6 +42,7 @@ const (
 	Circles_React_FullMethodName                      = "/cpb.Circles/React"
 	Circles_RemoveReaction_FullMethodName             = "/cpb.Circles/RemoveReaction"
 	Circles_GetAvailableReactions_FullMethodName      = "/cpb.Circles/GetAvailableReactions"
+	Circles_GetCircleJoinRequests_FullMethodName      = "/cpb.Circles/GetCircleJoinRequests"
 )
 
 // CirclesClient is the client API for Circles service.
@@ -71,6 +72,7 @@ type CirclesClient interface {
 	React(ctx context.Context, in *ReactRequest, opts ...grpc.CallOption) (*MoodResponse, error)
 	RemoveReaction(ctx context.Context, in *RemoveReactionRequest, opts ...grpc.CallOption) (*MoodResponse, error)
 	GetAvailableReactions(ctx context.Context, in *GetAvailableReactionsRequest, opts ...grpc.CallOption) (*GetAvailableReactionsResponse, error)
+	GetCircleJoinRequests(ctx context.Context, in *GetCircleJoinRequestsRequest, opts ...grpc.CallOption) (*GetCircleJoinRequestsResponse, error)
 }
 
 type circlesClient struct {
@@ -288,6 +290,15 @@ func (c *circlesClient) GetAvailableReactions(ctx context.Context, in *GetAvaila
 	return out, nil
 }
 
+func (c *circlesClient) GetCircleJoinRequests(ctx context.Context, in *GetCircleJoinRequestsRequest, opts ...grpc.CallOption) (*GetCircleJoinRequestsResponse, error) {
+	out := new(GetCircleJoinRequestsResponse)
+	err := c.cc.Invoke(ctx, Circles_GetCircleJoinRequests_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CirclesServer is the server API for Circles service.
 // All implementations must embed UnimplementedCirclesServer
 // for forward compatibility
@@ -315,6 +326,7 @@ type CirclesServer interface {
 	React(context.Context, *ReactRequest) (*MoodResponse, error)
 	RemoveReaction(context.Context, *RemoveReactionRequest) (*MoodResponse, error)
 	GetAvailableReactions(context.Context, *GetAvailableReactionsRequest) (*GetAvailableReactionsResponse, error)
+	GetCircleJoinRequests(context.Context, *GetCircleJoinRequestsRequest) (*GetCircleJoinRequestsResponse, error)
 	mustEmbedUnimplementedCirclesServer()
 }
 
@@ -390,6 +402,9 @@ func (UnimplementedCirclesServer) RemoveReaction(context.Context, *RemoveReactio
 }
 func (UnimplementedCirclesServer) GetAvailableReactions(context.Context, *GetAvailableReactionsRequest) (*GetAvailableReactionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAvailableReactions not implemented")
+}
+func (UnimplementedCirclesServer) GetCircleJoinRequests(context.Context, *GetCircleJoinRequestsRequest) (*GetCircleJoinRequestsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCircleJoinRequests not implemented")
 }
 func (UnimplementedCirclesServer) mustEmbedUnimplementedCirclesServer() {}
 
@@ -818,6 +833,24 @@ func _Circles_GetAvailableReactions_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Circles_GetCircleJoinRequests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCircleJoinRequestsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CirclesServer).GetCircleJoinRequests(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Circles_GetCircleJoinRequests_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CirclesServer).GetCircleJoinRequests(ctx, req.(*GetCircleJoinRequestsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Circles_ServiceDesc is the grpc.ServiceDesc for Circles service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -916,6 +949,10 @@ var Circles_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAvailableReactions",
 			Handler:    _Circles_GetAvailableReactions_Handler,
+		},
+		{
+			MethodName: "GetCircleJoinRequests",
+			Handler:    _Circles_GetCircleJoinRequests_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

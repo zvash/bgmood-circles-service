@@ -26,6 +26,7 @@ type Querier interface {
 	ExploreCirclesPaginated(ctx context.Context, arg ExploreCirclesPaginatedParams) ([]Circle, error)
 	GetAvailableReactions(ctx context.Context) ([]Reaction, error)
 	GetCircle(ctx context.Context, id uuid.UUID) (Circle, error)
+	GetCircleJoinRequests(ctx context.Context, arg GetCircleJoinRequestsParams) ([]CircleJoinRequest, error)
 	GetCircleMember(ctx context.Context, arg GetCircleMemberParams) (CircleMember, error)
 	GetCircleMoods(ctx context.Context, circleID uuid.UUID) ([]Mood, error)
 	GetCircleMoodsPaginated(ctx context.Context, arg GetCircleMoodsPaginatedParams) ([]Mood, error)

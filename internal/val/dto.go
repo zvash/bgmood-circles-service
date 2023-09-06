@@ -97,3 +97,8 @@ type ReactRequest struct {
 type RemoveReactionRequest struct {
 	MoodID string `json:"mood_id" validate:"required,uuid"`
 }
+
+type GetCircleJoinRequestsRequest struct {
+	CircleID string `json:"circle_id" validate:"required,uuid"`
+	Page     int64  `json:"page" validate:"required,number,min=1"`
+}

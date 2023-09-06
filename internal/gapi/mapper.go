@@ -204,3 +204,10 @@ func cpbRemoveReactionRequestToValRemoveReactionRequest(req *cpb.RemoveReactionR
 		MoodID: req.GetMoodId(),
 	}
 }
+
+func cpbGetCircleJoinRequestsRequestToValGetCircleJoinRequestsRequest(req *cpb.GetCircleJoinRequestsRequest) val.GetCircleJoinRequestsRequest {
+	return val.GetCircleJoinRequestsRequest{
+		CircleID: req.GetCircleId(),
+		Page:     req.GetPage(),
+	}
+}
