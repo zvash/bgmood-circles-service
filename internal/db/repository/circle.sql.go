@@ -289,7 +289,7 @@ FROM circles c
          LEFT JOIN moods m ON c.id = m.circle_id
 WHERE c.circle_type = 'HALL'
    OR cm.member_id = $1
-GROUP BY cm.circle_id
+GROUP BY c.id
 ORDER BY c.created_at DESC
 OFFSET $2 LIMIT $3
 `

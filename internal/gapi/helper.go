@@ -95,6 +95,13 @@ func (server *Server) getExploredCirclesMeta(ctx context.Context, userID uuid.UU
 	}
 	circlesMeta := make([]*cpb.CircleMeta, 0)
 	for _, circle := range circles {
+		canPost, err := server.db.CheckIfMemberCanPostToCircle(ctx, repository.CheckIfMemberCanPostToCircleParams{
+			MemberID: userID,
+			CircleID: circle.ID,
+		})
+		if err != nil {
+			continue
+		}
 		circleMeta := &cpb.CircleMeta{
 			Id:             circle.ID.String(),
 			OwnerId:        circle.OwnerID.String(),
@@ -108,6 +115,8 @@ func (server *Server) getExploredCirclesMeta(ctx context.Context, userID uuid.UU
 			MoodCount:      circle.MoodCount,
 			MemberCount:    circle.MemberCount,
 			ViewerIsMember: circle.IsMember,
+			ViewerIsOwner:  circle.OwnerID == userID,
+			ViewerCanPost:  canPost,
 		}
 		circlesMeta = append(circlesMeta, circleMeta)
 	}
