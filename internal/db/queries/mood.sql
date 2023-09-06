@@ -3,7 +3,7 @@ INSERT INTO moods (id, poster_id, circle_id, description, image, set_background)
 VALUES (sqlc.arg(id)::uuid,
         sqlc.arg(poster_id)::uuid,
         sqlc.arg(circle_id)::uuid,
-        COALESCE(sqlc.narg(description)::text, description),
+        sqlc.narg(description)::text,
         sqlc.arg(image)::text,
         sqlc.arg(set_background)::boolean)
 RETURNING *;

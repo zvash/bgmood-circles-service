@@ -16,7 +16,8 @@ func (store *SQLStore) CreateMoodTransaction(
 ) (repository.Mood, error) {
 	var mood repository.Mood
 	err := store.executeTransaction(ctx, func(queries *repository.Queries) error {
-		mood, err := queries.CreateMood(ctx, arg.CreateMoodParams)
+		var err error
+		mood, err = queries.CreateMood(ctx, arg.CreateMoodParams)
 		if err != nil {
 			return err
 		}

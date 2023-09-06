@@ -17,7 +17,7 @@ INSERT INTO moods (id, poster_id, circle_id, description, image, set_background)
 VALUES ($1::uuid,
         $2::uuid,
         $3::uuid,
-        COALESCE($4::text, description),
+        $4::text,
         $5::text,
         $6::boolean)
 RETURNING id, poster_id, circle_id, description, image, set_background, created_at
