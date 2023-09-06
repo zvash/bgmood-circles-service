@@ -221,7 +221,7 @@ func internalServerError() error {
 }
 
 func uniqueOrInternalError(err error) error {
-	if errors.Is(err, db.ErrUniqueViolation) {
+	if db.ErrorCode(err) == db.UniqueViolation {
 		return status.Errorf(codes.AlreadyExists, "record already exists")
 	}
 	return internalServerError()
