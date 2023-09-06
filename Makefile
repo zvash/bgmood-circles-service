@@ -30,8 +30,10 @@ test:
 server:
 	go run main.go
 
+mock:
+	mockgen -build_flags=--mod=mod -package mockdb --destination internal/db/mock/datastore.go github.com/zvash/bgmood-circles-service/internal/db DataStore
 proto:
 	rm -rf internal/cpb/* 2>/dev/null
 	protoc --go_out=internal/cpb --go_opt=paths=source_relative --go-grpc_out=internal/cpb --go-grpc_opt=paths=source_relative --grpc-gateway_out=internal/cpb --grpc-gateway_opt=paths=source_relative --proto_path=../bgmood-protos/circles-service ../bgmood-protos/circles-service/*.proto
 
-.PHONY: postgres createdb mu mu1 md md1 mr sqlc test server proto
+.PHONY: postgres createdb mu mu1 md md1 mr sqlc test server proto mock

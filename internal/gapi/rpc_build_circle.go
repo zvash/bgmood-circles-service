@@ -17,7 +17,7 @@ func (server *Server) CreateCircle(ctx context.Context, req *cpb.CreateCircleReq
 	}
 	idUUID, err := uuid.NewRandom()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "could not generate random uuid", err)
+		return nil, status.Errorf(codes.Internal, "could not generate random uuid: %v", err)
 	}
 	owner, err := server.extractUserFromContext(ctx)
 	if err != nil {
@@ -25,7 +25,7 @@ func (server *Server) CreateCircle(ctx context.Context, req *cpb.CreateCircleReq
 	}
 	ownerUUID, err := uuid.Parse(owner.Id)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "could not generate uuid from ownerId", err)
+		return nil, status.Errorf(codes.Internal, "could not generate uuid from ownerId: %v", err)
 	}
 
 	params := repository.CreateCircleParams{

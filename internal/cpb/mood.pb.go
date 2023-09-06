@@ -32,9 +32,9 @@ type Mood struct {
 	Image           string                 `protobuf:"bytes,4,opt,name=image,proto3" json:"image,omitempty"`
 	SetBackground   bool                   `protobuf:"varint,5,opt,name=set_background,json=setBackground,proto3" json:"set_background,omitempty"`
 	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	Description     *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	UserReaction    *Reaction              `protobuf:"bytes,8,opt,name=user_reaction,json=userReaction,proto3,oneof" json:"user_reaction,omitempty"`
-	OthersReactions []*ReactionAggregated  `protobuf:"bytes,9,rep,name=others_reactions,json=othersReactions,proto3" json:"others_reactions,omitempty"`
+	Description     *string               `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	UserReaction    *Reaction             `protobuf:"bytes,8,opt,name=user_reaction,json=userReaction,proto3,oneof" json:"user_reaction,omitempty"`
+	OthersReactions []*ReactionAggregated `protobuf:"bytes,9,rep,name=others_reactions,json=othersReactions,proto3" json:"others_reactions,omitempty"`
 }
 
 func (x *Mood) Reset() {

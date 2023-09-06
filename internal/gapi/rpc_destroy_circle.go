@@ -12,7 +12,7 @@ import (
 func (server *Server) DestroyCircle(ctx context.Context, req *cpb.DestroyCircleRequest) (*cpb.DestroyCircleResponse, error) {
 	idUUID, err := uuid.Parse(req.GetCircleId())
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "could not generate uuid from userId", err)
+		return nil, status.Errorf(codes.Internal, "could not generate uuid from userId: %v", err)
 	}
 	circle, err := server.getCircleForOwner(ctx, idUUID)
 	if err != nil {
