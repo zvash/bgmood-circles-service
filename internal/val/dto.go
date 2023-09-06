@@ -1,17 +1,17 @@
 package val
 
 type CreateCircleRequest struct {
-	Title       string `json:"title" validate:"required,alphanumunicode"`
+	Title       string `json:"title" validate:"required"`
 	Avatar      string `json:"avatar" validate:"required"`
-	Description string `json:"description" validate:"omitempty,alphanumunicode"`
+	Description string `json:"description" validate:"omitempty"`
 	CircleType  string `json:"circle_type"  validate:"required,oneof=ROOM HALL"`
-	IsPrivate   bool   `json:"is_private" validate:"required"`
+	IsPrivate   bool   `json:"is_private" validate:"omitempty"`
 }
 
 type EditCircleRequest struct {
-	Title       string `json:"title" validate:"omitempty,alphanumunicode"`
+	Title       string `json:"title" validate:"omitempty"`
 	Avatar      string `json:"avatar" validate:"omitempty"`
-	Description string `json:"description" validate:"omitempty,alphanumunicode"`
+	Description string `json:"description" validate:"omitempty"`
 	CircleType  string `json:"circle_type"  validate:"omitempty,oneof=ROOM HALL"`
 	IsPrivate   bool   `json:"is_private" validate:"omitempty"`
 }
@@ -61,7 +61,7 @@ type ExploreCirclesRequest struct {
 type CreateMoodRequest struct {
 	CircleID      string `json:"circle_id" validate:"required,uuid"`
 	Image         string `json:"image" validate:"required"`
-	SetBackground bool   `json:"set_background" validate:"required"`
+	SetBackground bool   `json:"set_background" validate:"omitempty"`
 	Description   string `json:"description" validate:"omitempty"`
 }
 

@@ -8,11 +8,13 @@ import (
 	"github.com/zvash/bgmood-circles-service/internal/db/repository"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"log"
 )
 
 func (server *Server) CreateCircle(ctx context.Context, req *cpb.CreateCircleRequest) (*cpb.CreateCircleResponse, error) {
 	dto := cpbCreateCircleRequestToValCreateCircleRequest(req)
 	if errs := server.validator.Validate(dto); errs != nil {
+		log.Printf("Errors are: %v", errorResponsesToErrorDetailsBadRequestFieldViolations(errs))
 		return nil, errorResponsesToStatusErrors(errs)
 	}
 	idUUID, err := uuid.NewRandom()
@@ -39,6 +41,9 @@ func (server *Server) CreateCircle(ctx context.Context, req *cpb.CreateCircleReq
 		IsFeatured:  false,
 	}
 	circle, err := server.db.CreateCircleTransaction(ctx, params)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "could not persist the new circle: %w", err)
+	}
 	resp := &cpb.CreateCircleResponse{
 		Circle: dbCircleToCPBCircle(circle),
 	}

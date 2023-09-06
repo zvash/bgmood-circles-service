@@ -39,7 +39,7 @@ func errorResponsesToStatusErrors(errs []val.ErrorResponse) error {
 	if err != nil {
 		return statusInvalid.Err()
 	}
-	return statusDetails.Err()
+	return status.Errorf(statusDetails.Code(), "%v", statusDetails.Details())
 }
 
 func cpbCreateCircleRequestToValCreateCircleRequest(req *cpb.CreateCircleRequest) val.CreateCircleRequest {
