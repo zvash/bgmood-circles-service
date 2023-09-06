@@ -28,6 +28,13 @@ func (store *SQLStore) AcceptJoinRequestTransaction(
 		if err != nil {
 			return err
 		}
+		err = queries.RemoveJoinRequest(ctx, repository.RemoveJoinRequestParams{
+			CircleID: arg.CircleID,
+			UserID:   arg.MemberID,
+		})
+		if err != nil {
+			return err
+		}
 		return arg.AfterAccept(result)
 	})
 	return result, err
