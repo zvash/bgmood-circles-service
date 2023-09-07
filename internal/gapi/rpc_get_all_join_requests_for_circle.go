@@ -28,12 +28,17 @@ func (server *Server) GetCircleJoinRequests(ctx context.Context, req *cpb.GetCir
 	if err != nil {
 		return nil, notFoundOrInternalError(err)
 	}
-	userIds := make([]string, 0)
+	cpbJoinRequests := make([]*cpb.JoinRequest, 0)
 	for _, record := range joinRequests {
-		userIds = append(userIds, record.UserID.String())
+		cpbJoinRequest := &cpb.JoinRequest{
+			JoinRequestId: record.ID,
+			UserId:        record.UserID.String(),
+			CircleId:      record.CircleID.String(),
+		}
+		cpbJoinRequests = append(cpbJoinRequests, cpbJoinRequest)
 	}
 	resp := &cpb.GetCircleJoinRequestsResponse{
-		UserIds: userIds,
+		JoinRequests: cpbJoinRequests,
 	}
 	return resp, nil
 }
